@@ -20,7 +20,6 @@ public class StartActivity extends AppCompatActivity {
 
     private Intent pasarPantalla;
     private ImageView imageView;
-// ESTA ES UNA PRUEBA DE ACTUALIZACION DE GIT HUB
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
