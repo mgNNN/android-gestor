@@ -17,9 +17,10 @@ import java.util.TimerTask;
 
 
 public class StartActivity extends AppCompatActivity {
-// prueba comentario v2
+
     private Intent pasarPantalla;
     private ImageView imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
