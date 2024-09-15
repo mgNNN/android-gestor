@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ImageButton;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class GimnasioActivity extends AppCompatActivity {
 
     protected Intent pasarPantalla;
+    protected Button boton_rutina;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +28,15 @@ public class GimnasioActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        boton_rutina = findViewById(R.id.boton1_rutina);
 
+        boton_rutina.setOnClickListener(v -> {
+            pasarPantalla = new Intent(GimnasioActivity.this, RutinaActivity.class);
+            finish();
+            startActivity(pasarPantalla);
+        });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -42,8 +50,8 @@ public class GimnasioActivity extends AppCompatActivity {
         if (id == R.id.menu_salir_gim) {
             finishAffinity();
             System.exit(0);
-        }else if (id==R.id.menu_volver_gim){
-            pasarPantalla=new Intent(GimnasioActivity.this,ModulosActivity.class);
+        } else if (id == R.id.menu_volver_gim) {
+            pasarPantalla = new Intent(GimnasioActivity.this, ModulosActivity.class);
             finish();
             startActivity(pasarPantalla);
         }

@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">GestorPersonal</string>
+    <string-array name="exercise_array">
+        <item>Push-ups</item>
+        <item>Squats</item>
+        <item>Deadlifts</item>
+        <item>Bench Press</item>
+        <item>Pull-ups</item>
+        <item>Lunges</item>
+        <item>Crunches</item>
+        <item>Planks</item>
+        <item>Leg Raises</item>
+        <item>Burpees</item>
+    </string-array>
 </resources>
