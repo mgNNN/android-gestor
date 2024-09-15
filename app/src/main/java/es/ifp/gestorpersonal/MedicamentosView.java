@@ -17,7 +17,6 @@ public class MedicamentosView extends AppCompatActivity {
 
     private Intent pasarPantallaMain;
     private Intent pasarPantallaMod;
-    protected DataBaseSQL db;
 
     protected TextView label1;
     protected TextView label2;
@@ -107,7 +106,7 @@ public class MedicamentosView extends AppCompatActivity {
                 partes = med.split(".-");
                 medID = Integer.parseInt(partes[0]);
                 if(medID!=-1) {
-                    db.deleteMedicamento(medID);
+                    //db.deleteMedicamento(medID);
                 }
                 finish();
                 startActivity(pasarPantallaMain);

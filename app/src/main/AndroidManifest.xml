@@ -25,7 +25,10 @@
             android:name=".MedicamentosAdd"
             android:exported="false" />
         <activity
-            android:name=".MedicamentoActivity"
+            android:name=".MedicamentosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RutinaActivity"
             android:exported="false" />
         <activity
             android:name=".GimnasioActivity"

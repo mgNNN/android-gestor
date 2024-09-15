@@ -55,8 +55,7 @@ public class MedicamentosActivity extends AppCompatActivity {
 
 
         lista1 = (ListView) findViewById(R.id.lista1_med);
-
-        meds = db.getAllMedicamentos();
+        //meds = db.getAllMedicamentos();
         adaptador = new ArrayAdapter<String>(MedicamentosActivity.this, android.R.layout.simple_list_item_1, meds);
         lista1.setAdapter(adaptador);
         pasarPantallaMed = new Intent(MedicamentosActivity.this, MedicamentosActivity.class);
@@ -75,7 +74,7 @@ public class MedicamentosActivity extends AppCompatActivity {
 
 
             Toast.makeText(this, "Medicamento enviado correctamente", Toast.LENGTH_SHORT).show();
-            db.insertMedicamento(medNombre, medDosis, medNumTomas, medDuracion, medHoraDosis1);
+            //db.insertMedicamento(medNombre, medDosis, medNumTomas, medDuracion, medHoraDosis1);
 
             startActivity(pasarPantallaMed);
             pasarPantallaMed.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
