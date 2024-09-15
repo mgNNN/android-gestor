@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/label1_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="15dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/caja1_med_mod"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="135dp" />
+
+    <EditText
+        android:id="@+id/caja1_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/label1_med_mod"
+        tools:layout_editor_absoluteY="120dp" />
+
+    <TextView
+        android:id="@+id/label2_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="15dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/caja2_med_mod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label1_med_mod" />
+
+    <EditText
+        android:id="@+id/caja2_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/label2_med_mod"
+        tools:layout_editor_absoluteY="191dp" />
+
+    <TextView
+        android:id="@+id/label3_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="15dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/caja3_med_mod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label2_med_mod" />
+
+    <EditText
+        android:id="@+id/caja3_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/label3_med_mod"
+        tools:layout_editor_absoluteY="260dp" />
+
+    <TextView
+        android:id="@+id/label4_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="15dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/caja4_med_mod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label3_med_mod" />
+
+    <TextView
+        android:id="@+id/label5_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="15dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/caja5_med_mod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label4_med_mod" />
+
+    <EditText
+        android:id="@+id/caja4_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/label4_med_mod"
+        tools:layout_editor_absoluteY="328dp" />
+
+    <EditText
+        android:id="@+id/caja5_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/label5_med_mod"
+        tools:layout_editor_absoluteY="405dp" />
+
+    <Button
+        android:id="@+id/button1_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        tools:layout_editor_absoluteX="52dp"
+        tools:layout_editor_absoluteY="522dp" />
+
+    <Button
+        android:id="@+id/button2_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="guardar"
+        tools:layout_editor_absoluteX="214dp"
+        tools:layout_editor_absoluteY="519dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

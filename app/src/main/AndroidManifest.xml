@@ -16,6 +16,15 @@
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".MedicamentosModify"
+            android:exported="false" />
+        <activity
+            android:name=".MedicamentosView"
+            android:exported="false" />
+        <activity
+            android:name=".MedicamentosAdd"
+            android:exported="false" />
+        <activity
             android:name=".MedicamentoActivity"
             android:exported="false" />
         <activity

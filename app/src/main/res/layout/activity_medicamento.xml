@@ -4,7 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MedicamentoActivity">
+    android:layout_height="match_parent">
 
+    <ListView
+        android:id="@+id/lista1_med"
+        android:layout_width="419dp"
+        android:layout_height="640dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
