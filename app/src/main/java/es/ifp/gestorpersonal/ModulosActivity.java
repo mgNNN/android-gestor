@@ -23,6 +23,7 @@ public class ModulosActivity extends AppCompatActivity {
     protected String usuario;
     protected Intent calendarIntent;
     protected ImageButton gimButton;
+    protected ImageButton medButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class ModulosActivity extends AppCompatActivity {
         boton1 = findViewById(R.id.boton1_modulo);
         label1 = findViewById(R.id.label1_modulos);
         gimButton = findViewById(R.id.botongim_modulos);
+        medButton = findViewById(R.id.botonmedicamento_modulos);
+
 
         // Obtener el nombre de usuario
         Intent intent = getIntent();
@@ -72,6 +75,11 @@ public class ModulosActivity extends AppCompatActivity {
             calendarIntent = new Intent(ModulosActivity.this, GimnasioActivity.class);
             startActivity(calendarIntent);
             finish();  // Finaliza esta actividad para que no vuelva a la pila
+        });
+        medButton.setOnClickListener(v -> {
+            calendarIntent = new Intent(ModulosActivity.this, MedicamentosActivity.class);
+            startActivity(calendarIntent);
+            finish();
         });
     }
 

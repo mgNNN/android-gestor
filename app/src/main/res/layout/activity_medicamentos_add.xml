@@ -101,7 +101,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
+        android:layout_marginBottom="5dp"
         android:text="Fecha fin de tratamiento"
+        app:layout_constraintBottom_toTopOf="@+id/caja7_med_add"
         app:layout_constraintTop_toBottomOf="@+id/caja6_med_add"
         tools:layout_editor_absoluteX="129dp" />
 
@@ -109,8 +111,12 @@
         android:id="@+id/button1_med_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="162dp"
         android:text="AÑADIR"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="605dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/caja7_med_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
