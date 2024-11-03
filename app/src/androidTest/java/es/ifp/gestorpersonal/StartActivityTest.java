@@ -1,6 +1,5 @@
 package es.ifp.gestorpersonal;
 
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -9,8 +8,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,48 +30,79 @@ import org.junit.runner.RunWith;
 public class StartActivityTest {
 
     @Rule
-    public ActivityScenarioRule<StartActivity> mActivityScenarioRule =
-            new ActivityScenarioRule<>(StartActivity.class);
+    public ActivityScenarioRule<LoginActivity> mActivityScenarioRule =
+            new ActivityScenarioRule<>(LoginActivity.class);
 
     @Test
     public void startActivityTest() {
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.caja1_main),
-                        childAtPosition(
-                                allOf(withId(R.id.main),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        appCompatEditText.perform(replaceText("123"), closeSoftKeyboard());
+        // Prueba de registro normal
+        performRegistration("nuevo1", "nuevo", "nuevo", "prueba@example.com");
 
-        ViewInteraction appCompatEditText2 = onView(
-                allOf(withId(R.id.caja2_main),
-                        childAtPosition(
-                                allOf(withId(R.id.main),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        appCompatEditText2.perform(replaceText("123"), closeSoftKeyboard());
+        // Prueba con campos vacíos
+        performRegistration("", "", "", "");
 
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.boton1_main), withText("Iniciar Sesi�n"),
-                        childAtPosition(
-                                allOf(withId(R.id.main),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                2),
-                        isDisplayed()));
-        appCompatButton.perform(click());
+        // Prueba con nombre de usuario duplicado
+        performRegistration("existingUser", "password123", "password123", "existing@example.com");
+
+        // Prueba con contraseñas no coincidentes
+        performRegistration("nuevoUser", "password123", "differentPassword", "test@example.com");
+
+        // Prueba con contraseña demasiado corta
+        performRegistration("shortPwdUser", "123", "123", "short@example.com");
+
+        // Prueba con nombre de usuario con caracteres especiales
+        performRegistration("user@name!", "password123", "password123", "special@example.com");
+
+        // Prueba con nombre de usuario largo
+        performRegistration("aVeryLongUsernameThatExceedsLimit", "password123", "password123", "long@example.com");
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
+    // Método auxiliar para realizar el registro con diferentes valores de entrada
+    private void performRegistration(String username, String password, String confirmPassword, String email) {
+        // Ir a la pantalla de registro
+        onView(allOf(withId(R.id.boton2_main), withText("Registrarse"),
+                childAtPosition(allOf(withId(R.id.main),
+                                childAtPosition(withId(android.R.id.content), 0)),
+                        3), isDisplayed())).perform(click());
 
+        // Ingresar nombre de usuario
+        onView(allOf(withId(R.id.caja1_register),
+                childAtPosition(allOf(withId(R.id.main),
+                                childAtPosition(withId(android.R.id.content), 0)),
+                        1), isDisplayed())).perform(replaceText(username), closeSoftKeyboard());
+
+        // Ingresar contraseña
+        onView(allOf(withId(R.id.caja2_register),
+                childAtPosition(allOf(withId(R.id.main),
+                                childAtPosition(withId(android.R.id.content), 0)),
+                        3), isDisplayed())).perform(replaceText(password), closeSoftKeyboard());
+
+        // Confirmar contraseña
+        onView(allOf(withId(R.id.caja3_register),
+                childAtPosition(allOf(withId(R.id.main),
+                                childAtPosition(withId(android.R.id.content), 0)),
+                        5), isDisplayed())).perform(replaceText(confirmPassword), closeSoftKeyboard());
+
+        // Ingresar correo electrónico
+        onView(allOf(withId(R.id.caja4_register),
+                childAtPosition(allOf(withId(R.id.main),
+                                childAtPosition(withId(android.R.id.content), 0)),
+                        9), isDisplayed())).perform(replaceText(email), closeSoftKeyboard());
+
+        // Intentar registrarse
+        onView(allOf(withId(R.id.boton2_register), withText("Registrarse"),
+                childAtPosition(allOf(withId(R.id.main),
+                                childAtPosition(withId(android.R.id.content), 0)),
+                        7), isDisplayed())).perform(click());
+
+        // Volver a la pantalla de inicio
+        onView(allOf(withId(R.id.boton1_register), withText("Volver"),
+                childAtPosition(allOf(withId(R.id.main),
+                                childAtPosition(withId(android.R.id.content), 0)),
+                        6), isDisplayed())).perform(click());
+    }
+
+    private static Matcher<View> childAtPosition(final Matcher<View> parentMatcher, final int position) {
         return new TypeSafeMatcher<View>() {
             @Override
             public void describeTo(Description description) {
