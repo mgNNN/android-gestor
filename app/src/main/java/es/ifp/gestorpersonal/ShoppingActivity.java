@@ -11,6 +11,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -39,7 +41,7 @@ public class ShoppingActivity extends AppCompatActivity {
     private OkHttpClient client;
     private static final String BASE_URL =
             "https://gestor-personal-4898737da4af.herokuapp.com/products";
-
+    private ActivityResultLauncher<Intent> addProductLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,15 @@ public class ShoppingActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        addProductLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        // Recargar productos si el resultado fue OK
+                        loadProducts();
+                    }
+                }
+        );
 
         client = new OkHttpClient();
         productList = findViewById(R.id.product_list);
@@ -62,8 +73,10 @@ public class ShoppingActivity extends AppCompatActivity {
 
         loadProducts();
 
-        addButton.setOnClickListener(v -> startActivity(new Intent(this,
-                ShoppingActivityAdd.class)));
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ShoppingActivityAdd.class);
+            addProductLauncher.launch(intent); // Usa el launcher en lugar de startActivityForResult
+        });
         editButton.setOnClickListener(v -> {
             if (selectedPosition >= 0) {
                 Intent intent = new Intent(this, ShoppingActivityEdit.class);
@@ -89,7 +102,7 @@ public class ShoppingActivity extends AppCompatActivity {
                 -> selectedPosition = position);
     }
 
-    private void loadProducts() {
+    public void loadProducts() {
         Request request = new Request.Builder()
                 .url(BASE_URL)
                 .build();
@@ -136,7 +149,7 @@ public class ShoppingActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_back) {
-            finish();
+            startActivity(new Intent(this, ModulosActivity.class));
         } else if (item.getItemId() == R.id.menu_close) {
             System.exit(0);
         } else if (item.getItemId() == R.id.menu_add) {

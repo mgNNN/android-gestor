@@ -1,5 +1,6 @@
 package es.ifp.gestorpersonal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -79,7 +80,8 @@ public class ShoppingActivityAdd extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Toast.makeText(ShoppingActivityAdd.this,
                                 "Producto añadido correctamente", Toast.LENGTH_SHORT).show();
-                        finish();
+                        setResult(RESULT_OK); // Indica que el producto se añadió
+                        finish(); // Cierra ShoppingActivityAdd
                     });
                 } else {
                     runOnUiThread(() -> Toast.makeText(ShoppingActivityAdd.this,
@@ -87,6 +89,7 @@ public class ShoppingActivityAdd extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show());
                 }
             }
+
         });
     }
 }
