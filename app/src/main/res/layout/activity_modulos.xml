@@ -55,13 +55,14 @@
         android:id="@+id/botoncompra_modulos"
         android:layout_width="156dp"
         android:layout_height="153dp"
+        android:layout_marginEnd="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.877"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.472"
-        app:srcCompat="@mipmap/icono_app" />
+        app:srcCompat="@mipmap/icono_shopping" />
 
     <ImageButton
         android:id="@+id/botonmedicamento_modulos"

@@ -3,12 +3,14 @@ package es.ifp.gestorpersonal;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,8 +24,10 @@ public class ModulosActivity extends AppCompatActivity {
     private TextView label1;
     protected String usuario;
     protected Intent calendarIntent;
+    protected Intent shoppingIntent;
     protected ImageButton gimButton;
     protected ImageButton medButton;
+    protected ImageButton shoppingButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public class ModulosActivity extends AppCompatActivity {
         label1 = findViewById(R.id.label1_modulos);
         gimButton = findViewById(R.id.botongim_modulos);
         medButton = findViewById(R.id.botonmedicamento_modulos);
+        shoppingButton = findViewById(R.id.botoncompra_modulos);
 
 
         // Obtener el nombre de usuario
@@ -71,6 +76,7 @@ public class ModulosActivity extends AppCompatActivity {
             finish();  // Finaliza esta actividad para que no vuelva a la pila
         });
 
+
         gimButton.setOnClickListener(v -> {
             calendarIntent = new Intent(ModulosActivity.this, GimnasioActivity.class);
             startActivity(calendarIntent);
@@ -79,6 +85,12 @@ public class ModulosActivity extends AppCompatActivity {
         medButton.setOnClickListener(v -> {
             calendarIntent = new Intent(ModulosActivity.this, MedicamentosActivity.class);
             startActivity(calendarIntent);
+            finish();
+        });
+
+        shoppingButton.setOnClickListener(v -> {
+            shoppingIntent = new Intent(ModulosActivity.this, ShoppingActivity.class);
+            startActivity(shoppingIntent);
             finish();
         });
     }
