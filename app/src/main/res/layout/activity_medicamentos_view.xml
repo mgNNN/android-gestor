@@ -17,34 +17,34 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/label4_med_mod3"
+        android:id="@+id/label4_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="50dp"
         android:text="Duración total"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label3_med_mod3" />
+        app:layout_constraintTop_toBottomOf="@+id/label3_med_view" />
 
     <TextView
-        android:id="@+id/label3_med_mod3"
+        android:id="@+id/label3_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="50dp"
         android:text="TomasDiarias"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label2_med_mod3" />
+        app:layout_constraintTop_toBottomOf="@+id/label2_med_view" />
 
     <TextView
-        android:id="@+id/label5_med_mod3"
+        android:id="@+id/label5_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="50dp"
         android:text="Primera toma"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label4_med_mod3" />
+        app:layout_constraintTop_toBottomOf="@+id/label4_med_view" />
 
     <EditText
         android:id="@+id/caja2_med_mod3"
@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@+id/caja1_med_view" />
 
     <TextView
-        android:id="@+id/label1_med_mod3"
+        android:id="@+id/label1_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -95,14 +95,14 @@
         app:layout_constraintTop_toBottomOf="@+id/caja4_med_mod3" />
 
     <TextView
-        android:id="@+id/label2_med_mod3"
+        android:id="@+id/label2_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="50dp"
         android:text="Dosis"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label1_med_mod3" />
+        app:layout_constraintTop_toBottomOf="@+id/label1_med_view" />
 
     <EditText
         android:id="@+id/caja3_med_mod3"
@@ -150,6 +150,6 @@
         android:text="Volver"
         app:layout_constraintEnd_toStartOf="@+id/button2_med_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label5_med_mod3" />
+        app:layout_constraintTop_toBottomOf="@+id/label5_med_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
