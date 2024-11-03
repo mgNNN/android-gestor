@@ -5,10 +5,7 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="StartActivityTest2">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="StartActivityTest">
+      <SelectionState runConfigName="startActivityTest3()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
