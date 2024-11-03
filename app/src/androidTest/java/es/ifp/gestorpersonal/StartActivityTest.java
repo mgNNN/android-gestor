@@ -95,6 +95,13 @@ public class StartActivityTest {
                                 childAtPosition(withId(android.R.id.content), 0)),
                         7), isDisplayed())).perform(click());
 
+        // Pausa de 15 segundos
+        try {
+            Thread.sleep(15000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // Volver a la pantalla de inicio
         onView(allOf(withId(R.id.boton1_register), withText("Volver"),
                 childAtPosition(allOf(withId(R.id.main),
