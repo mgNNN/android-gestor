@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.1"
+hamcrestLibrary = "2.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -11,6 +12,7 @@ runner = "1.6.2"
 rules = "1.6.1"
 
 [libraries]
+hamcrest-library = { module = "org.hamcrest:hamcrest-library", version.ref = "hamcrestLibrary" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -20,6 +22,7 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

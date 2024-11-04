@@ -97,7 +97,7 @@ public class StartActivityTest {
 
         // Pausa de 15 segundos
         try {
-            Thread.sleep(15000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

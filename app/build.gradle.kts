@@ -44,5 +44,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.runner)
     androidTestImplementation(libs.rules)
+    androidTestImplementation(libs.hamcrest.library)
 }
 
