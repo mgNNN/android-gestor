@@ -36,29 +36,29 @@ public class StartActivityTest {
     @Test
     public void startActivityTest() {
         // Prueba de registro normal
-        performRegistration("nuevo1", "nuevo", "nuevo", "prueba@example.com");
+        performRegistration("nuevo1", "nuevo",  "prueba@example.com", "666777888");
 
         // Prueba con campos vacíos
         performRegistration("", "", "", "");
 
         // Prueba con nombre de usuario duplicado
-        performRegistration("existingUser", "password123", "password123", "existing@example.com");
+        performRegistration("existingUser", "password123",  "existing@example.com","666777888");
 
         // Prueba con contraseñas no coincidentes
-        performRegistration("nuevoUser", "password123", "differentPassword", "test@example.com");
+        performRegistration("nuevoUser", "password123", "test@example.com","666777888");
 
         // Prueba con contraseña demasiado corta
-        performRegistration("shortPwdUser", "123", "123", "short@example.com");
+        performRegistration("shortPwdUser", "123", "short@example.com", "666777888");
 
         // Prueba con nombre de usuario con caracteres especiales
-        performRegistration("user@name!", "password123", "password123", "special@example.com");
+        performRegistration("user@name!", "password123",  "special@example.com","666777888");
 
         // Prueba con nombre de usuario largo
-        performRegistration("aVeryLongUsernameThatExceedsLimit", "password123", "password123", "long@example.com");
+        performRegistration("aVeryLongUsernameThatExceedsLimit", "password123", "long@example.com","666777888");
     }
 
     // Método auxiliar para realizar el registro con diferentes valores de entrada
-    private void performRegistration(String username, String password, String confirmPassword, String email) {
+    private void performRegistration(String username, String password, String email, String numeroTelefono) {
         // Ir a la pantalla de registro
         onView(allOf(withId(R.id.boton2_main), withText("Registrarse"),
                 childAtPosition(allOf(withId(R.id.main),
@@ -81,13 +81,13 @@ public class StartActivityTest {
         onView(allOf(withId(R.id.caja3_register),
                 childAtPosition(allOf(withId(R.id.main),
                                 childAtPosition(withId(android.R.id.content), 0)),
-                        5), isDisplayed())).perform(replaceText(confirmPassword), closeSoftKeyboard());
+                        5), isDisplayed())).perform(replaceText(email), closeSoftKeyboard());
 
         // Ingresar correo electrónico
         onView(allOf(withId(R.id.caja4_register),
                 childAtPosition(allOf(withId(R.id.main),
                                 childAtPosition(withId(android.R.id.content), 0)),
-                        9), isDisplayed())).perform(replaceText(email), closeSoftKeyboard());
+                        9), isDisplayed())).perform(replaceText(numeroTelefono), closeSoftKeyboard());
 
         // Intentar registrarse
         onView(allOf(withId(R.id.boton2_register), withText("Registrarse"),
