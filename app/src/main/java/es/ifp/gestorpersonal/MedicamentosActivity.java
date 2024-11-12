@@ -13,13 +13,26 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MedicamentosActivity extends AppCompatActivity {
 
@@ -27,7 +40,7 @@ public class MedicamentosActivity extends AppCompatActivity {
     private Intent pasarPantallaAddMed;
     private Intent pasarPantallaMed;
     private Intent pasarPantallaViewMed;
-    protected ListView lista1;
+    protected ListView medicamentosList;
     private ArrayList<String> meds = new ArrayList<String>();
     private ArrayAdapter<String> adaptador;
     private Bundle extras;
@@ -39,7 +52,11 @@ public class MedicamentosActivity extends AppCompatActivity {
     private String medHoraDosis1;
 
     private String contenidoItem = "";
-
+    private OkHttpClient client;
+    private static int userId = 13;
+    private static final String BASE_URL =
+            "https://gestor-personal-4898737da4af.herokuapp.com/medicamentos/"+userId;
+    private ActivityResultLauncher<Intent> addMedLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +68,28 @@ public class MedicamentosActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        addMedLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        // Recargar productos si el resultado fue OK
+                        loadMeds();
+                    }
+                }
+        );
+        client = new OkHttpClient();
+        medicamentosList = findViewById(R.id.lista1_med);
 
 
-
-        lista1 = (ListView) findViewById(R.id.lista1_med);
         //meds = db.getAllMedicamentos();
         adaptador = new ArrayAdapter<String>(MedicamentosActivity.this, android.R.layout.simple_list_item_1, meds);
-        lista1.setAdapter(adaptador);
+        medicamentosList.setAdapter(adaptador);
+
+        loadMeds();
+        //addButton.setOnClickListener(v -> {
+         //   Intent intent = new Intent(this, ShoppingActivityAdd.class);
+         //   addProductLauncher.launch(intent); // Usa el launcher en lugar de startActivityForResult
+        //});
         pasarPantallaMed = new Intent(MedicamentosActivity.this, MedicamentosActivity.class);
         pasarPantallaMed.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
@@ -81,7 +113,7 @@ public class MedicamentosActivity extends AppCompatActivity {
 
         }
 
-        lista1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        medicamentosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 contenidoItem = parent.getItemAtPosition(position).toString();
@@ -93,6 +125,52 @@ public class MedicamentosActivity extends AppCompatActivity {
 
     }
 
+    public void loadMeds() {
+        Request request = new Request.Builder()
+                .url(BASE_URL)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> Toast.makeText(MedicamentosActivity.this,
+                        "Error de red: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        meds.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject med = jsonArray.getJSONObject(i);
+                            String medicamento = med.getString("medicamento");
+                            //String dosis = med.getString("dosis");
+                            //String dosisDia = med.getString("dosisDia");
+                            //String duracionTratamiento = med.getString("duracionTratamiento");
+                            //String horaPrimeraDosis = med.getString("horaPrimeraDosis");
+
+                            meds.add(medicamento);
+                            //meds.add(dosis);
+                            //meds.add(dosisDia);
+                            //meds.add(duracionTratamiento);
+                            //meds.add(horaPrimeraDosis);
+
+                        }
+                        runOnUiThread(() -> adaptador.notifyDataSetChanged());
+                    } catch (JSONException e) {
+                        runOnUiThread(() -> Toast.makeText(MedicamentosActivity.this,
+                                "Error de datos", Toast.LENGTH_SHORT).show());
+                    }
+                } else {
+                    runOnUiThread(() -> Toast.makeText(MedicamentosActivity.this,
+                            "Error en el servidor: " + response.message(),
+                            Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

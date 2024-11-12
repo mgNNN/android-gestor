@@ -1,6 +1,5 @@
 package es.ifp.gestorpersonal;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,7 +39,6 @@ public class MedicamentosView extends AppCompatActivity {
     private String med;
     private String[] partes;
     private Integer medID = -1;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
