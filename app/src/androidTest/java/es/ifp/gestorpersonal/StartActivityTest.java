@@ -59,6 +59,7 @@ public class StartActivityTest {
 
     // Método auxiliar para realizar el registro con diferentes valores de entrada
     private void performRegistration(String username, String password, String email, String numeroTelefono) {
+
         // Ir a la pantalla de registro
         onView(allOf(withId(R.id.boton2_main), withText("Registrarse"),
                 childAtPosition(allOf(withId(R.id.main),
@@ -77,13 +78,13 @@ public class StartActivityTest {
                                 childAtPosition(withId(android.R.id.content), 0)),
                         3), isDisplayed())).perform(replaceText(password), closeSoftKeyboard());
 
-        // Confirmar contraseña
+        // Ingresar correo electrónico
         onView(allOf(withId(R.id.caja3_register),
                 childAtPosition(allOf(withId(R.id.main),
                                 childAtPosition(withId(android.R.id.content), 0)),
                         5), isDisplayed())).perform(replaceText(email), closeSoftKeyboard());
 
-        // Ingresar correo electrónico
+        // Ingresar numero de telefono
         onView(allOf(withId(R.id.caja4_register),
                 childAtPosition(allOf(withId(R.id.main),
                                 childAtPosition(withId(android.R.id.content), 0)),
@@ -97,7 +98,7 @@ public class StartActivityTest {
 
         // Pausa de 15 segundos
         try {
-            Thread.sleep(3000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

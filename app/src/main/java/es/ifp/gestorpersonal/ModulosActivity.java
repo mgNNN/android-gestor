@@ -28,7 +28,7 @@ public class ModulosActivity extends AppCompatActivity {
     protected ImageButton gimButton;
     protected ImageButton medButton;
     protected ImageButton shoppingButton;
-
+    protected int userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +52,12 @@ public class ModulosActivity extends AppCompatActivity {
         // Obtener el nombre de usuario
         Intent intent = getIntent();
         usuario = intent.getStringExtra("username");
+        userId = intent.getIntExtra("userId", -1);  // Recibe el userId pasado desde LoginActivity
+
+
+        if (userId == -1) {
+            Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+        }
 
         // En ModulosActivity: usar "show_welcome" en vez de "first_time"
         SharedPreferences preferences = getSharedPreferences("modulos_preferences", MODE_PRIVATE);
@@ -79,6 +85,7 @@ public class ModulosActivity extends AppCompatActivity {
 
         gimButton.setOnClickListener(v -> {
             calendarIntent = new Intent(ModulosActivity.this, GimnasioActivity.class);
+            calendarIntent.putExtra("userId", userId);  // Pasar el userId a la siguiente actividad
             startActivity(calendarIntent);
             finish();  // Finaliza esta actividad para que no vuelva a la pila
         });

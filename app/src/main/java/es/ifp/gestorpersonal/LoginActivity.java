@@ -117,22 +117,23 @@ public class LoginActivity extends AppCompatActivity {
     private void handleResponse(String responseBody) {
         try {
             JSONObject json = new JSONObject(responseBody);
-            if (json.has("token")) {
+            if (json.has("token") && json.has("userId")) {
                 String token = json.getString("token");
+                int userId = json.getInt("userId");  // Obtén el userId de la respuesta
 
                 // Mostrar mensaje de login exitoso
                 Toast.makeText(LoginActivity.this, "Login exitoso", Toast.LENGTH_SHORT).show();
 
-                // En LoginActivity: guardar "show_welcome" como true después del login exitoso.
+                // Guardar la preferencia para mostrar el mensaje de bienvenida en ModulosActivity
                 SharedPreferences preferences = getSharedPreferences("modulos_preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("show_welcome", true);  // Se asegura de que el mensaje de bienvenida se muestre en ModulosActivity
+                editor.putBoolean("show_welcome", true);
                 editor.apply();
 
-
-                // Navegar a la nueva pantalla (ModulosActivity)
+                // Navegar a ModulosActivity, pasando el token y el userId
                 Intent intent = new Intent(LoginActivity.this, ModulosActivity.class);
                 intent.putExtra("token", token);
+                intent.putExtra("userId", userId);  // Pasar el userId a la siguiente actividad
                 intent.putExtra("username", usuario.getText().toString());
                 finish();
                 startActivity(intent);
@@ -148,4 +149,5 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this, "Error en el análisis de la respuesta", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

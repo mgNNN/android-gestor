@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_guardar_rutina_gim"
+        android:icon="@android:drawable/ic_menu_save"
+        android:title="Item"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_volver_rutina_gim"
         android:title="Volver" />
     <item
