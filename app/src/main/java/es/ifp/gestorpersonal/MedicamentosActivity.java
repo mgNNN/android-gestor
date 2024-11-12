@@ -43,6 +43,7 @@ public class MedicamentosActivity extends AppCompatActivity {
     private Intent pasarPantallaViewMed;
     protected ListView medicamentosList;
     private ArrayList<String> meds = new ArrayList<String>();
+    private ArrayList<String> medsInfo = new ArrayList<String>();
     private ArrayAdapter<String> adaptador;
     private Bundle extras;
     protected int userIDdef;
@@ -122,12 +123,21 @@ public class MedicamentosActivity extends AppCompatActivity {
         medicamentosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                contenidoItem = parent.getItemAtPosition(position).toString();
-                Intent pasarPantallaViewMed = new Intent(MedicamentosActivity.this, MedicamentosView.class);
-                pasarPantallaViewMed.putExtra("MED", contenidoItem);
+                //contenidoItem = parent.getItemAtPosition(position).toString();
+
+                pasarPantallaViewMed = new Intent(MedicamentosActivity.this,MedicamentosView.class);
+                pasarPantallaViewMed.putStringArrayListExtra("medsInfo", medsInfo);
+
+//                pasarPantallaViewMed.putExtra("medicamento", medsInfo.get(0));
+//                pasarPantallaViewMed.putExtra("dosis", medsInfo.get(1));
+//                pasarPantallaViewMed.putExtra("dosisDia", contenidoItem);
+//                pasarPantallaViewMed.putExtra("duracionTratamiento", medsInfo);
+//                pasarPantallaViewMed.putExtra("horaPrimeraDosis", medsInfo);
+//                pasarPantallaViewMed.putExtra("id", contenidoItem);
                 startActivity(pasarPantallaViewMed);
             }
         });
+
 
     }
 
@@ -154,17 +164,18 @@ public class MedicamentosActivity extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject med = jsonArray.getJSONObject(i);
                             String medicamento = med.getString("medicamento");
-                            //String dosis = med.getString("dosis");
-                            //String dosisDia = med.getString("dosisDia");
-                            //String duracionTratamiento = med.getString("duracionTratamiento");
-                            //String horaPrimeraDosis = med.getString("horaPrimeraDosis");
-
+                            String dosis = med.getString("dosis");
+                            String dosisDia = med.getString("dosisDia");
+                            String duracionTratamiento = med.getString("duracionTratamiento");
+                            String horaPrimeraDosis = med.getString("horaPrimeraDosis");
+                            String itemId = med.getString("id");
                             meds.add(medicamento);
-                            //meds.add(dosis);
-                            //meds.add(dosisDia);
-                            //meds.add(duracionTratamiento);
-                            //meds.add(horaPrimeraDosis);
-
+                            medsInfo.add(medicamento);
+                            medsInfo.add(dosis);
+                            medsInfo.add(dosisDia);
+                            medsInfo.add(duracionTratamiento);
+                            medsInfo.add(horaPrimeraDosis);
+                            medsInfo.add(itemId);
                         }
                         runOnUiThread(() -> adaptador.notifyDataSetChanged());
                     } catch (JSONException e) {

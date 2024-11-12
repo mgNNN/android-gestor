@@ -7,10 +7,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 
 public class MedicamentosView extends AppCompatActivity {
 
@@ -23,6 +26,12 @@ public class MedicamentosView extends AppCompatActivity {
     protected TextView label4;
     protected TextView label5;
 
+    protected EditText caja1;
+    protected EditText caja2;
+    protected EditText caja3;
+    protected EditText caja4;
+    protected EditText caja5;
+
     protected Button boton1;
     protected Button boton2;
     protected Button boton3;
@@ -34,6 +43,7 @@ public class MedicamentosView extends AppCompatActivity {
     private String medNumTomas;
     private String medDuracion;
     private String medHoraDosis1;
+    private String itemId;
 
 
     private String med;
@@ -50,31 +60,35 @@ public class MedicamentosView extends AppCompatActivity {
         label3 = (TextView) findViewById(R.id.label3_med_view);
         label4 = (TextView) findViewById(R.id.label4_med_view);
         label5 = (TextView) findViewById(R.id.label5_med_view);
+
+        caja1 = (EditText) findViewById(R.id.caja1_med_view);
+        caja2 = (EditText) findViewById(R.id.caja2_med_mod3);
+        caja3 = (EditText) findViewById(R.id.caja3_med_mod3);
+        caja4 = (EditText) findViewById(R.id.caja4_med_mod3);
+        caja5 = (EditText) findViewById(R.id.caja5_med_mod3);
+
         boton1 = (Button) findViewById(R.id.button1_med_view);
         boton2 = (Button) findViewById(R.id.button2_med_view);
         boton3 = (Button) findViewById(R.id.button3_med_view);
 
-        med = getIntent().getStringExtra("MED");
-
         pasarPantallaMain = new Intent(MedicamentosView.this, ModulosActivity.class);
         pasarPantallaMod = new Intent(MedicamentosView.this, MedicamentosModify.class);
 
-        extras = getIntent().getExtras();
-        if (extras != null) {
-            medNombre = extras.getString("MED_NOMBRE");
-            medDosis = extras.getString("MED_DOSIS");
-            medNumTomas = extras.getString("MED_NUM_DOSIS");
-            medDuracion = extras.getString("MED_DURACION");
-            medHoraDosis1 = extras.getString("MED_HORA_DOSIS");
-
-            // pendiente hacer getNombre/dosis etc, para ubicar el cursor en la posicion que hemos seleccionado
+        ArrayList<String> medsInfo = getIntent().getStringArrayListExtra("medsInfo");
+        if (medsInfo != null) {
+            String medNombre = medsInfo.get(0);
+            String medDosis = medsInfo.get(1);
+            String medNumTomas = medsInfo.get(2);
+            String medDuracion = medsInfo.get(3);
+            String medHoraDosis1 = medsInfo.get(4);
 
 
-            label1.setText(medNombre);
-            label2.setText(medDosis);
-            label3.setText(medNumTomas);
-            label4.setText(medDuracion);
-            label5.setText(medHoraDosis1);
+            caja1.setText(medNombre);
+            caja2.setText(medDosis);
+            caja3.setText(medNumTomas);
+            caja4.setText(medDuracion);
+            caja5.setText(medHoraDosis1);
+
 
         }
         boton1.setOnClickListener(new View.OnClickListener() {
