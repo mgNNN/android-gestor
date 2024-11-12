@@ -3,18 +3,17 @@ package es.ifp.gestorpersonal;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -64,8 +63,13 @@ public class GimnasioActivity extends AppCompatActivity {
         boton_rutina = findViewById(R.id.boton1_rutina);
         listViewRutinas = findViewById(R.id.listViewRutinas);
 
-        Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", -1);  // Recibe el userId pasado desde LoginActivity
+        // Recuperar el userId de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userId", -1);
+
+        if (userId == -1) {
+            Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+        }
 
         // Inicializar OkHttpClient
         client = new OkHttpClient();
@@ -77,19 +81,18 @@ public class GimnasioActivity extends AppCompatActivity {
 
         // Cargar rutinas al iniciar la actividad
         cargarRutinas();
+
         listViewRutinas.setOnItemClickListener((parent, view, position, id) -> {
             if (!rutinasList.isEmpty() && position < rutinasList.size()) {
                 String selectedRutina = rutinasList.get(position);
-                // Continúa con la lógica para abrir la nueva actividad, usando el `selectedRutina`
+                // Abrir DetalleRutinaActivity y pasar el nombre de la rutina usando Intent
                 Intent intent2 = new Intent(GimnasioActivity.this, DetalleRutinaActivity.class);
                 intent2.putExtra("nombreRutina", selectedRutina);
-                intent2.putExtra("userId", userId);
                 startActivity(intent2);
             } else {
                 Toast.makeText(GimnasioActivity.this, "No hay rutinas disponibles", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         boton_rutina.setOnClickListener(v -> {
             LayoutInflater inflater = getLayoutInflater();
@@ -100,24 +103,13 @@ public class GimnasioActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
             builder.setTitle("Crear nueva rutina")
                     .setView(dialogView)
-                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Obtener el texto del EditText
-                            String nombreRutina = editTextRoutineName.getText().toString();
-                            pasarPantalla = new Intent(GimnasioActivity.this, RutinaActivity.class);
-                            pasarPantalla.putExtra("nombreRutina", nombreRutina);
-                            pasarPantalla.putExtra("userId", userId);
-                            startActivity(pasarPantalla);
-                            finish();
-                        }
+                    .setPositiveButton("Aceptar", (dialog, which) -> {
+                        String nombreRutina = editTextRoutineName.getText().toString();
+                        pasarPantalla = new Intent(GimnasioActivity.this, RutinaActivity.class);
+                        pasarPantalla.putExtra("nombreRutina", nombreRutina); // Solo pasar el nombre de la rutina
+                        startActivity(pasarPantalla);
                     })
-                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
 
             // Mostrar el cuadro de diálogo
             builder.create().show();
@@ -143,7 +135,7 @@ public class GimnasioActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
-                    parseRutinas(responseBody); // Llamar a parseRutinas para procesar la respuesta JSON
+                    parseRutinas(responseBody);
                 } else {
                     runOnUiThread(() ->
                             Toast.makeText(GimnasioActivity.this, "Error en el servidor: " + response.message(), Toast.LENGTH_SHORT).show()
@@ -152,6 +144,7 @@ public class GimnasioActivity extends AppCompatActivity {
             }
         });
     }
+
     private void parseRutinas(String jsonResponse) {
         try {
             JSONArray jsonArray = new JSONArray(jsonResponse);
@@ -166,10 +159,8 @@ public class GimnasioActivity extends AppCompatActivity {
                 double peso = obj.getDouble("peso");
                 int repeticiones = obj.getInt("repeticiones");
 
-                // Crear el objeto Serie
                 Serie serie = new Serie(serieId, peso, repeticiones);
 
-                // Verificar si la rutina ya existe en el mapa
                 Rutina rutina;
                 if (!rutinaMap.containsKey(rutinaId)) {
                     rutina = new Rutina(nombreRutina, userId, new ArrayList<>());
@@ -178,16 +169,12 @@ public class GimnasioActivity extends AppCompatActivity {
                     rutina = rutinaMap.get(rutinaId);
                 }
 
-                // Agregar la serie a la rutina en el mapa
-                Ejercicio ejercicio = new Ejercicio(serieId); // Asumiendo un ejercicio por serie para este ejemplo
+                Ejercicio ejercicio = new Ejercicio(serieId);
                 ejercicio.addSerie(serie);
                 rutina.getEjercicios().add(ejercicio);
             }
 
-            // Convertir el mapa de rutinas en una lista
             List<Rutina> rutinas = new ArrayList<>(rutinaMap.values());
-
-            // Mostrar las rutinas en el ListView
             runOnUiThread(() -> mostrarRutinas(rutinas));
 
         } catch (JSONException e) {
@@ -197,6 +184,7 @@ public class GimnasioActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     private void mostrarRutinas(List<Rutina> rutinas) {
         RutinaAdapter rutinaAdapter = new RutinaAdapter(this, rutinas);
         listViewRutinas.setAdapter(rutinaAdapter);
@@ -205,10 +193,8 @@ public class GimnasioActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Recargar las rutinas al volver a esta actividad
         cargarRutinas();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -225,8 +211,8 @@ public class GimnasioActivity extends AppCompatActivity {
             System.exit(0);
         } else if (id == R.id.menu_volver_rutina_gim) {
             pasarPantalla = new Intent(GimnasioActivity.this, ModulosActivity.class);
-            finish();
             startActivity(pasarPantalla);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

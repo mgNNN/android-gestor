@@ -53,16 +53,16 @@ public class ModulosActivity extends AppCompatActivity {
         Intent intent = getIntent();
         usuario = intent.getStringExtra("username");
         userId = intent.getIntExtra("userId", -1);  // Recibe el userId pasado desde LoginActivity
+
         // Almacena el userId en SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor1 = sharedPreferences.edit();
-        editor1.putInt("userId", userId);  // userId es el ID del usuario que has obtenido al iniciar sesión
-        editor1.apply();
-
-
-        if (userId == -1) {
-            Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+        if (userId != -1) {
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor1 = sharedPreferences.edit();
+            editor1.putInt("userId", userId);
+            editor1.apply();
         }
+
+
 
         // En ModulosActivity: usar "show_welcome" en vez de "first_time"
         SharedPreferences preferences = getSharedPreferences("modulos_preferences", MODE_PRIVATE);
@@ -84,7 +84,7 @@ public class ModulosActivity extends AppCompatActivity {
         boton1.setOnClickListener(v -> {
             calendarIntent = new Intent(ModulosActivity.this, CalendarioActivity.class);
             startActivity(calendarIntent);
-            finish();  // Finaliza esta actividad para que no vuelva a la pila
+            //finish();  // Finaliza esta actividad para que no vuelva a la pila
         });
 
 

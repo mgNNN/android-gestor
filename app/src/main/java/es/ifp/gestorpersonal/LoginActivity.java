@@ -137,8 +137,8 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("token", token);
                 intent.putExtra("userId", userId);  // Pasar el userId a la siguiente actividad
                 intent.putExtra("username", usuario.getText().toString());
-                finish();
                 startActivity(intent);
+                finish();
 
             } else if (json.has("error")) {
                 String message = json.getString("error");

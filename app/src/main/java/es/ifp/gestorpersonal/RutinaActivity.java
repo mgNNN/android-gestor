@@ -1,6 +1,7 @@
 package es.ifp.gestorpersonal;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,11 +49,10 @@ public class RutinaActivity extends AppCompatActivity {
     protected EditText editTextRepeticiones;
     protected Button buttonAddEjercicio;
     protected TextView textViewRutina;
-    protected Bundle extras;
     protected String nombreRutina;
     protected Intent pasarPantalla;
     protected LinearLayout contenedorEjercicios;
-    protected int userId;
+    private int userId;
     private OkHttpClient client;
     private List<String> exerciseNames = new ArrayList<>();
     private List<String> ejercicioList = new ArrayList<>();
@@ -77,28 +77,26 @@ public class RutinaActivity extends AppCompatActivity {
         contenedorEjercicios = findViewById(R.id.contenedorEjercicios);
 
         client = new OkHttpClient();
-        extras = getIntent().getExtras();
 
-        if (extras != null) {
-            nombreRutina = extras.getString("nombreRutina");
-            userId = extras.getInt("userId", -1);
-            if (userId == -1) {
-                Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "No se recibieron datos para la rutina", Toast.LENGTH_SHORT).show();
+        // Obtén el nombre de la rutina desde extras
+        nombreRutina = getIntent().getStringExtra("nombreRutina");
+
+        // Recuperar el userId desde SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userId", -1);
+
+        if (userId == -1) {
+            Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
         }
 
         textViewRutina.setText(nombreRutina);
-
-
-
 
         // Configurar el botón para añadir ejercicios a la lista
         buttonAddEjercicio.setOnClickListener(v -> {
             fetchExerciseNames(); // Llama al método para obtener los nombres de los ejercicios
         });
     }
+
     private void guardarRutina() {
         // Construye los datos de la rutina
         List<Ejercicio> ejercicios = new ArrayList<>();
@@ -116,18 +114,25 @@ public class RutinaActivity extends AppCompatActivity {
                 EditText editTextPeso = serieView.findViewById(R.id.editTextPeso);
                 EditText editTextRepeticiones = serieView.findViewById(R.id.editTextRepeticiones);
 
-                // Convertir a los valores adecuados
-                double peso = Double.parseDouble(editTextPeso.getText().toString());
-                int repeticiones = Integer.parseInt(editTextRepeticiones.getText().toString());
-                int series = j + 1; // Contador de series
+                // Establece valores predeterminados si los campos están vacíos
+                double peso = 0.0;
+                int repeticiones = 0;
+                try {
+                    peso = editTextPeso.getText().toString().isEmpty() ? 0.0 : Double.parseDouble(editTextPeso.getText().toString());
+                    repeticiones = editTextRepeticiones.getText().toString().isEmpty() ? 0 : Integer.parseInt(editTextRepeticiones.getText().toString());
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Ingrese valores válidos en los campos de peso y repeticiones", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                int series = j + 1; // Contador de series
                 ejercicio.addSerie(new Serie(series, peso, repeticiones));
             }
             ejercicios.add(ejercicio);
         }
 
         // Construir el JSON para la API
-        Rutina rutina = new Rutina(nombreRutina, userId, ejercicios); // Asegúrate de que userId esté disponible
+        Rutina rutina = new Rutina(nombreRutina, userId, ejercicios);
         String jsonData = new Gson().toJson(rutina);
 
         // Crear el cuerpo de la solicitud
@@ -141,25 +146,20 @@ public class RutinaActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() ->
-                        Toast.makeText(RutinaActivity.this, "Error al guardar la rutina", Toast.LENGTH_SHORT).show()
-                );
+                runOnUiThread(() -> Toast.makeText(RutinaActivity.this, "Error al guardar la rutina", Toast.LENGTH_SHORT).show());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    runOnUiThread(() ->
-                            Toast.makeText(RutinaActivity.this, "Rutina guardada exitosamente", Toast.LENGTH_SHORT).show()
-                    );
+                    runOnUiThread(() -> Toast.makeText(RutinaActivity.this, "Rutina guardada exitosamente", Toast.LENGTH_SHORT).show());
                 } else {
-                    runOnUiThread(() ->
-                            Toast.makeText(RutinaActivity.this, "Error del servidor: " + response.message(), Toast.LENGTH_SHORT).show()
-                    );
+                    runOnUiThread(() -> Toast.makeText(RutinaActivity.this, "Error del servidor: " + response.message(), Toast.LENGTH_SHORT).show());
                 }
             }
         });
     }
+
     private void fetchExerciseNames() {
         String url = "https://gestor-personal-4898737da4af.herokuapp.com/ejercicios/nombres";
 
@@ -191,7 +191,7 @@ public class RutinaActivity extends AppCompatActivity {
                             exerciseMap.put(nombre, id);
                             exerciseNames.add(nombre);
                         }
-                        runOnUiThread(() -> showAddExerciseDialog()); // Abre el diálogo en el hilo principal
+                        runOnUiThread(() -> showAddExerciseDialog());
                     } catch (JSONException e) {
                         runOnUiThread(() ->
                                 Toast.makeText(RutinaActivity.this, "Error en el análisis de la respuesta", Toast.LENGTH_SHORT).show()
@@ -207,7 +207,6 @@ public class RutinaActivity extends AppCompatActivity {
         });
     }
 
-    // Mueve la creación del diálogo a una función separada que se llama solo cuando los datos están disponibles
     private void showAddExerciseDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_spinner_gim, null);
@@ -242,8 +241,8 @@ public class RutinaActivity extends AppCompatActivity {
 
         builder.create().show();
     }
+
     private int getEjercicioId(String nombreEjercicio) {
-        // Busca el ID en el HashMap, si no lo encuentra, devuelve -1
         return exerciseMap.getOrDefault(nombreEjercicio, -1);
     }
 
@@ -263,7 +262,7 @@ public class RutinaActivity extends AppCompatActivity {
             pasarPantalla = new Intent(RutinaActivity.this, GimnasioActivity.class);
             finish();
             startActivity(pasarPantalla);
-        } else if (id == R.id.menu_guardar_rutina_gim){
+        } else if (id == R.id.menu_guardar_rutina_gim) {
             guardarRutina();
             pasarPantalla = new Intent(RutinaActivity.this, GimnasioActivity.class);
             finish();

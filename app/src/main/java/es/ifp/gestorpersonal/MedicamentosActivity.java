@@ -88,6 +88,10 @@ public class MedicamentosActivity extends AppCompatActivity {
         int userId = sharedPreferences.getInt("userId", -1);  // El valor -1 es por si no existe un userId guardado
         userIDdef=userId;
 
+        //Toast.makeText(this, String.valueOf(userIDdef), Toast.LENGTH_SHORT).show();
+
+
+
         //meds = db.getAllMedicamentos();
         adaptador = new ArrayAdapter<String>(MedicamentosActivity.this, android.R.layout.simple_list_item_1, meds);
         medicamentosList.setAdapter(adaptador);
