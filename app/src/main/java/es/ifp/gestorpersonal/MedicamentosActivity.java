@@ -2,6 +2,7 @@ package es.ifp.gestorpersonal;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,7 +45,7 @@ public class MedicamentosActivity extends AppCompatActivity {
     private ArrayList<String> meds = new ArrayList<String>();
     private ArrayAdapter<String> adaptador;
     private Bundle extras;
-
+    protected int userIDdef;
     private String medNombre;
     private String medDosis;
     private String medNumTomas;
@@ -53,9 +54,10 @@ public class MedicamentosActivity extends AppCompatActivity {
 
     private String contenidoItem = "";
     private OkHttpClient client;
-    private static int userId = 13;
+
+
     private static final String BASE_URL =
-            "https://gestor-personal-4898737da4af.herokuapp.com/medicamentos/"+userId;
+            "https://gestor-personal-4898737da4af.herokuapp.com/medicamentos/";
     private ActivityResultLauncher<Intent> addMedLauncher;
 
     @Override
@@ -80,6 +82,10 @@ public class MedicamentosActivity extends AppCompatActivity {
         client = new OkHttpClient();
         medicamentosList = findViewById(R.id.lista1_med);
 
+        // Recupera el userId de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);  // El valor -1 es por si no existe un userId guardado
+        userIDdef=userId;
 
         //meds = db.getAllMedicamentos();
         adaptador = new ArrayAdapter<String>(MedicamentosActivity.this, android.R.layout.simple_list_item_1, meds);
@@ -126,8 +132,10 @@ public class MedicamentosActivity extends AppCompatActivity {
     }
 
     public void loadMeds() {
+
+
         Request request = new Request.Builder()
-                .url(BASE_URL)
+                .url(BASE_URL+userIDdef)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
