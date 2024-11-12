@@ -15,6 +15,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class MedicamentosAdd extends AppCompatActivity {
 
     protected TextView label1;
@@ -30,7 +42,9 @@ public class MedicamentosAdd extends AppCompatActivity {
     private Intent pasarPantallaMain;
     private Intent pasarPantallaAddMed;
     private Intent pasarPantallaMed;
-
+    // Declaración de OkHttpClient
+    private final OkHttpClient client = new OkHttpClient();
+    ;
 
     private String contenidoCaja1;
     private String contenidoCaja2;
@@ -58,42 +72,74 @@ public class MedicamentosAdd extends AppCompatActivity {
         pasarPantallaMain = new Intent(MedicamentosAdd.this, ModulosActivity.class);
         pasarPantallaMed = new Intent(MedicamentosAdd.this, MedicamentosActivity.class);
         pasarPantallaAddMed = new Intent(MedicamentosAdd.this, MedicamentosAdd.class);
-        boton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                contenidoCaja1 = caja1.getText().toString();
-                contenidoCaja2 = caja2.getText().toString();
-                contenidoCaja3 = caja3.getText().toString();
-                contenidoCaja4 = caja4.getText().toString();
-                contenidoCaja5 = caja5.getText().toString();
 
-                if (contenidoCaja1.isEmpty()) {
-                    Toast.makeText(MedicamentosAdd.this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
-                } else if (contenidoCaja2.isEmpty()) {
-                    Toast.makeText(MedicamentosAdd.this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
-                } else if (contenidoCaja3.isEmpty()) {
-                    Toast.makeText(MedicamentosAdd.this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
-                } else if (contenidoCaja4.isEmpty()) {
-                    Toast.makeText(MedicamentosAdd.this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
-                } else if (contenidoCaja5.isEmpty()) {
-                    Toast.makeText(MedicamentosAdd.this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MedicamentosAdd.this, "Medicamento guardado correctamente", Toast.LENGTH_SHORT).show();
+        boton1.setOnClickListener(v -> {
+            contenidoCaja1 = caja1.getText().toString();  // Nombre del medicamento
+            contenidoCaja2 = caja2.getText().toString();  // Dosis
+            contenidoCaja3 = caja3.getText().toString();  // Dosis por día
+            contenidoCaja4 = caja4.getText().toString();  // Duración del tratamiento
+            contenidoCaja5 = caja5.getText().toString();  // Hora primera dosis
 
-                    pasarPantallaMed.putExtra("MED_NOMBRE", contenidoCaja1);
-                    pasarPantallaMed.putExtra("MED_DOSIS", contenidoCaja2);
-                    pasarPantallaMed.putExtra("MED_NUM_DOSIS", contenidoCaja3);
-                    pasarPantallaMed.putExtra("MED_DURACION", contenidoCaja4);
-                    pasarPantallaMed.putExtra("MED_HORA_DOSIS", contenidoCaja5);
-
-
-                    startActivity(pasarPantallaMed);
-                    finish();
-                }
+            if (contenidoCaja1.isEmpty() || contenidoCaja2.isEmpty() || contenidoCaja3.isEmpty() ||
+                    contenidoCaja4.isEmpty() || contenidoCaja5.isEmpty()) {
+                Toast.makeText(MedicamentosAdd.this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
+            } else {
+                guardarMedicamento();
             }
         });
     }
+    private void guardarMedicamento() {
+        try {
+            // Crear JSON con los datos del medicamento
+            JSONObject medicamentoJson = new JSONObject();
+            medicamentoJson.put("user_id", 13); // Asegúrate de pasar el user_id adecuado
+            medicamentoJson.put("medicamento", contenidoCaja1);
+            medicamentoJson.put("dosis", Double.parseDouble(contenidoCaja2));
+            medicamentoJson.put("dosisDia", Integer.parseInt(contenidoCaja3));
+            medicamentoJson.put("duracionTratamiento", Float.parseFloat(contenidoCaja4));
+            medicamentoJson.put("horaPrimeraDosis", contenidoCaja5);
 
+            // Crear RequestBody
+            RequestBody body = RequestBody.create(
+                    medicamentoJson.toString(),
+                    MediaType.parse("application/json; charset=utf-8")
+            );
+
+            // Crear Request
+            Request request = new Request.Builder()
+                    .url("https://gestor-personal-4898737da4af.herokuapp.com/medicamentos") // Asegúrate de que esta URL sea correcta
+                    .post(body)
+                    .build();
+
+            // Ejecutar la solicitud en segundo plano
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    runOnUiThread(() ->
+                            Toast.makeText(MedicamentosAdd.this, "Error de red: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(MedicamentosAdd.this, "Medicamento guardado correctamente", Toast.LENGTH_SHORT).show();
+                            startActivity(pasarPantallaMed);
+                            finish();
+                        });
+                    } else {
+                        runOnUiThread(() ->
+                                Toast.makeText(MedicamentosAdd.this, "Error en el servidor: " + response.message(), Toast.LENGTH_SHORT).show()
+                        );
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al crear el medicamento", Toast.LENGTH_SHORT).show();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
