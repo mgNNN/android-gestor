@@ -43,7 +43,7 @@ public class MedicamentosActivity extends AppCompatActivity {
     private Intent pasarPantallaViewMed;
     protected ListView medicamentosList;
     private ArrayList<String> meds = new ArrayList<String>();
-    private ArrayList<String> medsInfo = new ArrayList<String>();
+    private ArrayList<Medicamento> medsInfo = new ArrayList<Medicamento>();
     private ArrayAdapter<String> adaptador;
     private Bundle extras;
     protected int userIDdef;
@@ -124,9 +124,10 @@ public class MedicamentosActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //contenidoItem = parent.getItemAtPosition(position).toString();
-
+                if (position < medsInfo.size()) {
+                Medicamento medicamentoItem = medsInfo.get(position);
                 pasarPantallaViewMed = new Intent(MedicamentosActivity.this,MedicamentosView.class);
-                pasarPantallaViewMed.putStringArrayListExtra("medsInfo", medsInfo);
+                pasarPantallaViewMed.putExtra("medicamento", medicamentoItem);
 
 //                pasarPantallaViewMed.putExtra("medicamento", medsInfo.get(0));
 //                pasarPantallaViewMed.putExtra("dosis", medsInfo.get(1));
@@ -135,6 +136,9 @@ public class MedicamentosActivity extends AppCompatActivity {
 //                pasarPantallaViewMed.putExtra("horaPrimeraDosis", medsInfo);
 //                pasarPantallaViewMed.putExtra("id", contenidoItem);
                 startActivity(pasarPantallaViewMed);
+                } else {
+                    Toast.makeText(MedicamentosActivity.this, "Índice no válido", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -161,21 +165,24 @@ public class MedicamentosActivity extends AppCompatActivity {
                     try {
                         JSONArray jsonArray = new JSONArray(response.body().string());
                         meds.clear();
+                        medsInfo.clear();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject med = jsonArray.getJSONObject(i);
-                            String medicamento = med.getString("medicamento");
+                            String medic = med.getString("medicamento");
                             String dosis = med.getString("dosis");
                             String dosisDia = med.getString("dosisDia");
                             String duracionTratamiento = med.getString("duracionTratamiento");
                             String horaPrimeraDosis = med.getString("horaPrimeraDosis");
                             String itemId = med.getString("id");
-                            meds.add(medicamento);
+                            meds.add(medic);
+//                            medsInfo.add(medic);
+//                            medsInfo.add(dosis);
+//                            medsInfo.add(dosisDia);
+//                            medsInfo.add(duracionTratamiento);
+//                            medsInfo.add(horaPrimeraDosis);
+//                           medsInfo.add(itemId);
+                            Medicamento medicamento = new Medicamento(medic, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, itemId);
                             medsInfo.add(medicamento);
-                            medsInfo.add(dosis);
-                            medsInfo.add(dosisDia);
-                            medsInfo.add(duracionTratamiento);
-                            medsInfo.add(horaPrimeraDosis);
-                            medsInfo.add(itemId);
                         }
                         runOnUiThread(() -> adaptador.notifyDataSetChanged());
                     } catch (JSONException e) {

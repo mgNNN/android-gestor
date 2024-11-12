@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,23 +75,35 @@ public class MedicamentosView extends AppCompatActivity {
         pasarPantallaMain = new Intent(MedicamentosView.this, ModulosActivity.class);
         pasarPantallaMod = new Intent(MedicamentosView.this, MedicamentosModify.class);
 
-        ArrayList<String> medsInfo = getIntent().getStringArrayListExtra("medsInfo");
-        if (medsInfo != null) {
-            String medNombre = medsInfo.get(0);
-            String medDosis = medsInfo.get(1);
-            String medNumTomas = medsInfo.get(2);
-            String medDuracion = medsInfo.get(3);
-            String medHoraDosis1 = medsInfo.get(4);
-
-
-            caja1.setText(medNombre);
-            caja2.setText(medDosis);
-            caja3.setText(medNumTomas);
-            caja4.setText(medDuracion);
-            caja5.setText(medHoraDosis1);
-
-
+        Intent intent = getIntent();
+        Medicamento medicamentoItem = (Medicamento) intent.getSerializableExtra("medicamento");
+        if (medicamentoItem != null) {
+            caja1.setText(medicamentoItem.getNombre());
+            caja2.setText(medicamentoItem.getDosis());
+            caja3.setText(medicamentoItem.getDosisDia());
+            caja4.setText(medicamentoItem.getDuracionTratamiento());
+            caja5.setText(medicamentoItem.getHoraPrimeraDosis());
+        } else {
+            Toast.makeText(this, "No se recibieron datos del medicamento", Toast.LENGTH_SHORT).show();
         }
+
+///// ahora solo estamos pasando los datos del primer medicamento creado.
+// Pendiente obtener la posicion y obtener los datos de ese elemento del array list
+//        ArrayList<String> medsInfo = getIntent().getStringArrayListExtra("medsInfo");
+//        if (medsInfo != null) {
+//            String medNombre = medsInfo.get(0);
+//            String medDosis = medsInfo.get(1);
+//            String medNumTomas = medsInfo.get(2);
+//            String medDuracion = medsInfo.get(3);
+//            String medHoraDosis1 = medsInfo.get(4);
+//
+//
+//            caja1.setText(medNombre);
+//            caja2.setText(medDosis);
+//            caja3.setText(medNumTomas);
+//            caja4.setText(medDuracion);
+//            caja5.setText(medHoraDosis1);
+//        }
         boton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,18 +112,14 @@ public class MedicamentosView extends AppCompatActivity {
                 finish();
             }
         });
-        boton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pasarPantallaMod.putExtra("MED_NOMBRE", medNombre);
-                pasarPantallaMod.putExtra("MED_DOSIS", medDosis);
-                pasarPantallaMod.putExtra("MED_NUM_DOSIS", medNumTomas);
-                pasarPantallaMod.putExtra("MED_DURACION", medDuracion);
-                pasarPantallaMod.putExtra("MED_HORA_DOSIS", medHoraDosis1);
-                startActivity(pasarPantallaMod);
-                finish();
-
-            }
+        boton2.setOnClickListener(v -> {
+            pasarPantallaMod.putExtra("MED_NOMBRE", medicamentoItem.getNombre());
+            pasarPantallaMod.putExtra("MED_DOSIS", medicamentoItem.getDosis());
+            pasarPantallaMod.putExtra("MED_NUM_DOSIS", medicamentoItem.getDosisDia());
+            pasarPantallaMod.putExtra("MED_DURACION", medicamentoItem.getDuracionTratamiento());
+            pasarPantallaMod.putExtra("MED_HORA_DOSIS", medicamentoItem.getHoraPrimeraDosis());
+            startActivity(pasarPantallaMod);
+            finish();
         });
         boton3.setOnClickListener(new View.OnClickListener() {
             @Override
