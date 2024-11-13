@@ -177,7 +177,7 @@ public class MedicamentosActivity extends AppCompatActivity {
                             String dosisDia = med.getString("dosisDia");
                             String duracionTratamiento = med.getString("duracionTratamiento");
                             String horaPrimeraDosis = med.getString("horaPrimeraDosis");
-                            String itemId = med.getString("id");
+                            int itemId = med.getInt("id");
                             meds.add(medic);
 //                            medsInfo.add(medic);
 //                            medsInfo.add(dosis);

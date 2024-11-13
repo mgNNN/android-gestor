@@ -1,6 +1,8 @@
 package es.ifp.gestorpersonal;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,11 +12,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MedicamentosView extends AppCompatActivity {
 
@@ -37,7 +45,6 @@ public class MedicamentosView extends AppCompatActivity {
     protected Button boton2;
     protected Button boton3;
 
-
     private Bundle extras;
     private String medNombre;
     private String medDosis;
@@ -45,7 +52,6 @@ public class MedicamentosView extends AppCompatActivity {
     private String medDuracion;
     private String medHoraDosis1;
     private String itemId;
-
 
     private String med;
     private String[] partes;
@@ -72,8 +78,14 @@ public class MedicamentosView extends AppCompatActivity {
         boton2 = (Button) findViewById(R.id.button2_med_view);
         boton3 = (Button) findViewById(R.id.button3_med_view);
 
-        pasarPantallaMain = new Intent(MedicamentosView.this, ModulosActivity.class);
-        pasarPantallaMod = new Intent(MedicamentosView.this, MedicamentosModify.class);
+        pasarPantallaMain = new Intent(MedicamentosView.this, MedicamentosActivity.class);
+        //pasarPantallaMod = new Intent(MedicamentosView.this, MedicamentosModify.class);
+
+        caja1.setEnabled(false);
+        caja2.setEnabled(false);
+        caja3.setEnabled(false);
+        caja4.setEnabled(false);
+        caja5.setEnabled(false);
 
         Intent intent = getIntent();
         Medicamento medicamentoItem = (Medicamento) intent.getSerializableExtra("medicamento");
@@ -83,54 +95,80 @@ public class MedicamentosView extends AppCompatActivity {
             caja3.setText(medicamentoItem.getDosisDia());
             caja4.setText(medicamentoItem.getDuracionTratamiento());
             caja5.setText(medicamentoItem.getHoraPrimeraDosis());
+            medID = medicamentoItem.getId(); // Asumiendo que Medicamento tiene un método getId()
         } else {
             Toast.makeText(this, "No se recibieron datos del medicamento", Toast.LENGTH_SHORT).show();
         }
 
-///// ahora solo estamos pasando los datos del primer medicamento creado.
-// Pendiente obtener la posicion y obtener los datos de ese elemento del array list
-//        ArrayList<String> medsInfo = getIntent().getStringArrayListExtra("medsInfo");
-//        if (medsInfo != null) {
-//            String medNombre = medsInfo.get(0);
-//            String medDosis = medsInfo.get(1);
-//            String medNumTomas = medsInfo.get(2);
-//            String medDuracion = medsInfo.get(3);
-//            String medHoraDosis1 = medsInfo.get(4);
-//
-//
-//            caja1.setText(medNombre);
-//            caja2.setText(medDosis);
-//            caja3.setText(medNumTomas);
-//            caja4.setText(medDuracion);
-//            caja5.setText(medHoraDosis1);
-//        }
         boton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startActivity(pasarPantallaMain);
                 finish();
             }
         });
+
         boton2.setOnClickListener(v -> {
-            pasarPantallaMod.putExtra("MED_NOMBRE", medicamentoItem.getNombre());
-            pasarPantallaMod.putExtra("MED_DOSIS", medicamentoItem.getDosis());
-            pasarPantallaMod.putExtra("MED_NUM_DOSIS", medicamentoItem.getDosisDia());
-            pasarPantallaMod.putExtra("MED_DURACION", medicamentoItem.getDuracionTratamiento());
-            pasarPantallaMod.putExtra("MED_HORA_DOSIS", medicamentoItem.getHoraPrimeraDosis());
-            startActivity(pasarPantallaMod);
-            finish();
+            caja1.setEnabled(true);
+            caja1.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+            caja2.setEnabled(true);
+            caja2.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+            caja3.setEnabled(true);
+            caja3.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+            caja4.setEnabled(true);
+            caja4.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+            caja5.setEnabled(true);
+            caja5.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
         });
-        boton3.setOnClickListener(new View.OnClickListener() {
+
+        boton3.setOnClickListener(v -> {
+            // Confirmación de eliminación
+            AlertDialog.Builder builder = new AlertDialog.Builder(MedicamentosView.this);
+            builder.setMessage("¿Estás seguro de que quieres eliminar este medicamento?")
+                    .setCancelable(false)
+                    .setPositiveButton("Sí", (dialog, id) -> {
+                        // Si el medicamento tiene un id válido, ejecutamos el DELETE
+                        if (medID != -1) {
+                            deleteMedicamento(medID);
+                        }
+                    })
+                    .setNegativeButton("No", (dialog, id) -> dialog.cancel())
+                    .show();
+        });
+    }
+
+    private void deleteMedicamento(int medicamentoId) {
+        OkHttpClient client = new OkHttpClient();
+
+        // URL para el DELETE, reemplazando :medicamento_id con el ID real
+        String url = "https://gestor-personal-4898737da4af.herokuapp.com/medicamentos/" + medicamentoId;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .delete()  // Método DELETE
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onClick(View v) {
-                partes = med.split(".-");
-                medID = Integer.parseInt(partes[0]);
-                if(medID!=-1) {
-                    //db.deleteMedicamento(medID);
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() ->
+                        Toast.makeText(MedicamentosView.this, "Error al eliminar medicamento", Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MedicamentosView.this, "Medicamento eliminado exitosamente", Toast.LENGTH_SHORT).show();
+                        finish();  // Regresar a la pantalla anterior después de la eliminación
+                        startActivity(pasarPantallaMain);  // Redirigir si es necesario
+                    });
+                } else {
+                    runOnUiThread(() ->
+                            Toast.makeText(MedicamentosView.this, "Error al eliminar medicamento", Toast.LENGTH_SHORT).show()
+                    );
                 }
-                finish();
-                startActivity(pasarPantallaMain);
             }
         });
     }
@@ -150,5 +188,3 @@ public class MedicamentosView extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-
-

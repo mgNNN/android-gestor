@@ -7,10 +7,10 @@ import java.io.Serializable;
         private String dosisDia;
         private String duracionTratamiento;
         private String horaPrimeraDosis;
-        private String id;
+        private int id;
 
         // Constructor
-        public Medicamento(String nombre, String dosis, String dosisDia, String duracionTratamiento, String horaPrimeraDosis, String id) {
+        public Medicamento(String nombre, String dosis, String dosisDia, String duracionTratamiento, String horaPrimeraDosis, int id) {
             this.nombre = nombre;
             this.dosis = dosis;
             this.dosisDia = dosisDia;
@@ -35,7 +35,7 @@ import java.io.Serializable;
         public String getHoraPrimeraDosis() { return horaPrimeraDosis; }
         public void setHoraPrimeraDosis(String horaPrimeraDosis) { this.horaPrimeraDosis = horaPrimeraDosis; }
 
-        public String getId() { return id; }
-        public void setId(String id) { this.id = id; }
+        public int getId() { return id; }
+        public void setId(int id) { this.id = id; }
     }
 
