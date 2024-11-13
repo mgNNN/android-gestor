@@ -4,7 +4,9 @@
 
     <item
         android:id="@+id/menu_volver_rutina_gim"
-        android:title="Volver" />
+        android:icon="@android:drawable/ic_menu_revert"
+        android:title="Volver"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_salir_rutina_gim"
         android:title="Salir" />

@@ -169,8 +169,9 @@ public class GimnasioActivity extends AppCompatActivity {
                 double peso = obj.getDouble("peso");
                 int series = obj.getInt("series");
                 int repeticiones = obj.getInt("repeticiones");
+                int id = obj.getInt("serie_id");
 
-                Serie serie = new Serie(series, peso, repeticiones, nombreEjercicio); // Pasa nombreEjercicio
+                Serie serie = new Serie(id,series, peso, repeticiones, nombreEjercicio); // Pasa nombreEjercicio
 
                 Rutina rutina;
                 if (!rutinaMap.containsKey(rutinaId)) {

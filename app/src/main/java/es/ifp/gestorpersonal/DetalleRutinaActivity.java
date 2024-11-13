@@ -16,8 +16,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class DetalleRutinaActivity extends AppCompatActivity {
 
@@ -105,6 +114,9 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                         seriesDetails.set(position, selectedSerie.getNombreEjercicio() + ", Peso: " + newPeso + " kg, Repeticiones: " + newRepeticiones);
                         adapter.notifyDataSetChanged();
 
+                        // Llamar al método para enviar la solicitud PUT al backend
+                        actualizarSerieEnBaseDeDatos(selectedSerie.getId(), newPeso, newRepeticiones);
+
                         Toast.makeText(this, "Serie actualizada", Toast.LENGTH_SHORT).show();
                     } catch (NumberFormatException e) {
                         Toast.makeText(this, "Por favor, ingrese valores válidos", Toast.LENGTH_SHORT).show();
@@ -114,6 +126,43 @@ public class DetalleRutinaActivity extends AppCompatActivity {
 
         builder.create().show();
     }
+
+    private void actualizarSerieEnBaseDeDatos(int serieId, double nuevoPeso, int nuevasRepeticiones) {
+        OkHttpClient client = new OkHttpClient();
+
+        // Crea el cuerpo de la solicitud PUT con los datos de la serie
+        String json = "{ \"peso\": " + nuevoPeso + ", \"repeticiones\": " + nuevasRepeticiones + " }";
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
+
+        // Enviar la solicitud PUT
+        Request request = new Request.Builder()
+                .url("https://gestor-personal-4898737da4af.herokuapp.com/series/" + serieId)
+                .put(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(DetalleRutinaActivity.this, "Error al actualizar la serie", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(DetalleRutinaActivity.this, "Serie actualizada correctamente", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        Toast.makeText(DetalleRutinaActivity.this, "Error en la actualización de la serie", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

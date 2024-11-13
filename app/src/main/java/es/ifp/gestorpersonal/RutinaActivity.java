@@ -125,7 +125,10 @@ public class RutinaActivity extends AppCompatActivity {
                 }
 
                 int series = j + 1; // Contador de series
-                ejercicio.addSerie(new Serie(series, peso, repeticiones,nombreEjercicioView.getText().toString()));
+                int id = 0;  // Aquí obtendrás el ID si es necesario, de lo contrario es 0 para nuevas series
+
+                // Si la serie ya tiene un ID (por ejemplo, si estás editando), puedes pasar el ID
+                ejercicio.addSerie(new Serie(id, series, peso, repeticiones, nombreEjercicioView.getText().toString()));
             }
             ejercicios.add(ejercicio);
         }
@@ -158,6 +161,7 @@ public class RutinaActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void fetchExerciseNames() {
         String url = "https://gestor-personal-4898737da4af.herokuapp.com/ejercicios/nombres";
