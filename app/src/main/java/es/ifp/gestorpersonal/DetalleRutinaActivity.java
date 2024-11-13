@@ -41,12 +41,22 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         textViewNombreRutina.setText(nombreRutina);
 
         // Preparar los detalles de cada serie para mostrar en el ListView
-        if (seriesList != null) {
+        if (seriesList != null && !seriesList.isEmpty()) {
+            String lastExerciseName = ""; // Para rastrear el último nombre de ejercicio
+
             for (Serie serie : seriesList) {
-                String detalle = "Serie ID: " + serie.getSeries() +
-                        ", Peso: " + serie.getPeso() + " kg" +
+                String currentExerciseName = serie.getNombreEjercicio();
+
+                // Si el ejercicio es diferente al anterior, agrega una línea en blanco para separar
+                if (!lastExerciseName.equals(currentExerciseName) && !lastExerciseName.isEmpty()) {
+                    seriesDetails.add(""); // Añadir línea en blanco
+                }
+
+                String detalle = currentExerciseName + ", Peso: " + serie.getPeso() + " kg" +
                         ", Repeticiones: " + serie.getRepeticiones();
                 seriesDetails.add(detalle);
+
+                lastExerciseName = currentExerciseName; // Actualizar el último nombre de ejercicio
             }
         }
 

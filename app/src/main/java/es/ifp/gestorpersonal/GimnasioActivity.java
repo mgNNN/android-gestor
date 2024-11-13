@@ -165,11 +165,12 @@ public class GimnasioActivity extends AppCompatActivity {
 
                 int rutinaId = obj.getInt("rutina_id");
                 String nombreRutina = obj.getString("nombre_rutina");
-                int serieId = obj.getInt("serie_id");
+                String nombreEjercicio = obj.getString("nombre_ejercicio"); // Obtén el nombre del ejercicio
                 double peso = obj.getDouble("peso");
+                int series = obj.getInt("series");
                 int repeticiones = obj.getInt("repeticiones");
 
-                Serie serie = new Serie(serieId, peso, repeticiones);
+                Serie serie = new Serie(series, peso, repeticiones, nombreEjercicio); // Pasa nombreEjercicio
 
                 Rutina rutina;
                 if (!rutinaMap.containsKey(rutinaId)) {
@@ -179,7 +180,7 @@ public class GimnasioActivity extends AppCompatActivity {
                     rutina = rutinaMap.get(rutinaId);
                 }
 
-                Ejercicio ejercicio = new Ejercicio(serieId);
+                Ejercicio ejercicio = new Ejercicio(series);
                 ejercicio.addSerie(serie);
                 rutina.getEjercicios().add(ejercicio);
             }
@@ -194,6 +195,7 @@ public class GimnasioActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 
     private void mostrarRutinas(List<Rutina> rutinas) {
         rutinasList.clear();
@@ -231,7 +233,7 @@ public class GimnasioActivity extends AppCompatActivity {
             finishAffinity();
             System.exit(0);
         } else if (id == R.id.menu_volver_rutina_gim) {
-            pasarPantalla = new Intent(GimnasioActivity.this, GimnasioActivity.class);
+            pasarPantalla = new Intent(GimnasioActivity.this, ModulosActivity.class);
             startActivity(pasarPantalla);
             finish();
         }

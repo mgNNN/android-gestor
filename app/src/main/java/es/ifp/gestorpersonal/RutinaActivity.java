@@ -126,7 +126,7 @@ public class RutinaActivity extends AppCompatActivity {
                 }
 
                 int series = j + 1; // Contador de series
-                ejercicio.addSerie(new Serie(series, peso, repeticiones));
+                ejercicio.addSerie(new Serie(series, peso, repeticiones,nombreEjercicioView.getText().toString()));
             }
             ejercicios.add(ejercicio);
         }
