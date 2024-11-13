@@ -45,9 +45,9 @@ public class GimnasioActivity extends AppCompatActivity {
     protected EditText popupNombre;
     protected int userId;
     private ListView listViewRutinas;
-    private List<String> rutinasList;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> nombreAdapter;
     private OkHttpClient client;
+    private List<Rutina> rutinasList; // Lista para almacenar objetos completos de Rutina
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,25 +74,35 @@ public class GimnasioActivity extends AppCompatActivity {
         // Inicializar OkHttpClient
         client = new OkHttpClient();
 
-        // Configurar el adaptador para el ListView
+        // Inicializar la lista de rutinas y el adaptador para mostrar nombres en el ListView
         rutinasList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, rutinasList);
-        listViewRutinas.setAdapter(adapter);
+        nombreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
+        listViewRutinas.setAdapter(nombreAdapter);
 
         // Cargar rutinas al iniciar la actividad
         cargarRutinas();
 
         listViewRutinas.setOnItemClickListener((parent, view, position, id) -> {
             if (!rutinasList.isEmpty() && position < rutinasList.size()) {
-                String selectedRutina = rutinasList.get(position);
-                // Abrir DetalleRutinaActivity y pasar el nombre de la rutina usando Intent
+                Rutina selectedRutina = rutinasList.get(position);
+
                 Intent intent2 = new Intent(GimnasioActivity.this, DetalleRutinaActivity.class);
-                intent2.putExtra("nombreRutina", selectedRutina);
+                intent2.putExtra("nombreRutina", selectedRutina.getNombre());
+
+                // Extraer todas las series de todos los ejercicios en la rutina seleccionada
+                ArrayList<Serie> seriesList = new ArrayList<>();
+                for (Ejercicio ejercicio : selectedRutina.getEjercicios()) {
+                    seriesList.addAll(ejercicio.getSeries()); // Añade todas las series de cada ejercicio
+                }
+                intent2.putExtra("seriesList", seriesList);
+
                 startActivity(intent2);
             } else {
                 Toast.makeText(GimnasioActivity.this, "No hay rutinas disponibles", Toast.LENGTH_SHORT).show();
             }
         });
+
+
 
         boton_rutina.setOnClickListener(v -> {
             LayoutInflater inflater = getLayoutInflater();
@@ -186,8 +196,19 @@ public class GimnasioActivity extends AppCompatActivity {
     }
 
     private void mostrarRutinas(List<Rutina> rutinas) {
-        RutinaAdapter rutinaAdapter = new RutinaAdapter(this, rutinas);
-        listViewRutinas.setAdapter(rutinaAdapter);
+        rutinasList.clear();
+        rutinasList.addAll(rutinas); // Almacena los objetos completos de tipo Rutina
+
+        // Crear una lista de nombres para el adaptador de nombres
+        List<String> nombresRutinas = new ArrayList<>();
+        for (Rutina rutina : rutinas) {
+            nombresRutinas.add(rutina.getNombre());
+        }
+
+        // Actualizar el adaptador de nombres
+        nombreAdapter.clear();
+        nombreAdapter.addAll(nombresRutinas);
+        nombreAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -210,7 +231,7 @@ public class GimnasioActivity extends AppCompatActivity {
             finishAffinity();
             System.exit(0);
         } else if (id == R.id.menu_volver_rutina_gim) {
-            pasarPantalla = new Intent(GimnasioActivity.this, ModulosActivity.class);
+            pasarPantalla = new Intent(GimnasioActivity.this, GimnasioActivity.class);
             startActivity(pasarPantalla);
             finish();
         }

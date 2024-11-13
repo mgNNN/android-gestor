@@ -1,8 +1,9 @@
 package es.ifp.gestorpersonal;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Rutina {
+public class Rutina implements Serializable {
     private String nombre;
     private int user_id;
     private List<Ejercicio> ejercicios;

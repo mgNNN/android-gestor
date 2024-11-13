@@ -1,6 +1,8 @@
 package es.ifp.gestorpersonal;
 
-public class Serie {
+import java.io.Serializable;
+
+public class Serie implements Serializable {
     private int series;
     private double peso;
     private int repeticiones;
