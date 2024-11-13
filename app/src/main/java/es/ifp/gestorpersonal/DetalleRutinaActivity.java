@@ -2,14 +2,18 @@ package es.ifp.gestorpersonal;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -20,9 +24,9 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     private TextView textViewNombreRutina;
     private ListView listViewSeries;
     private String nombreRutina;
-    private ArrayList<Serie> seriesList; // Recibir como ArrayList<Serie>
+    private ArrayList<Serie> seriesList;
     private ArrayAdapter<String> adapter;
-    private List<String> seriesDetails = new ArrayList<>(); // Para mostrar los detalles en formato de texto
+    private List<String> seriesDetails = new ArrayList<>();
     protected Intent pasarPantalla;
 
     @Override
@@ -42,7 +46,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
 
         // Preparar los detalles de cada serie para mostrar en el ListView
         if (seriesList != null && !seriesList.isEmpty()) {
-            String lastExerciseName = ""; // Para rastrear el último nombre de ejercicio
+            String lastExerciseName = "";
 
             for (Serie serie : seriesList) {
                 String currentExerciseName = serie.getNombreEjercicio();
@@ -56,13 +60,59 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                         ", Repeticiones: " + serie.getRepeticiones();
                 seriesDetails.add(detalle);
 
-                lastExerciseName = currentExerciseName; // Actualizar el último nombre de ejercicio
+                lastExerciseName = currentExerciseName;
             }
         }
 
         // Configurar ListView con los detalles de las series
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, seriesDetails);
         listViewSeries.setAdapter(adapter);
+
+        listViewSeries.setOnItemClickListener((parent, view, position, id) -> {
+            // Comprobar que el elemento seleccionado no es una línea en blanco
+            if (!seriesDetails.get(position).isEmpty()) {
+                // Mostrar diálogo para editar peso y repeticiones
+                showEditDialog(position);
+            }
+        });
+    }
+
+    private void showEditDialog(int position) {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_series, null);
+        EditText editTextPeso = dialogView.findViewById(R.id.editTextPesoModificar);
+        EditText editTextRepeticiones = dialogView.findViewById(R.id.editTextRepeticionesModificar);
+
+        Serie selectedSerie = seriesList.get(position);
+
+        // Rellenar con valores actuales
+        editTextPeso.setText(String.valueOf(selectedSerie.getPeso()));
+        editTextRepeticiones.setText(String.valueOf(selectedSerie.getRepeticiones()));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Modificar Serie")
+                .setView(dialogView)
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    try {
+                        double newPeso = Double.parseDouble(editTextPeso.getText().toString());
+                        int newRepeticiones = Integer.parseInt(editTextRepeticiones.getText().toString());
+
+                        // Actualizar los valores en el objeto Serie
+                        selectedSerie.setPeso(newPeso);
+                        selectedSerie.setRepeticiones(newRepeticiones);
+
+                        // Actualizar los detalles en la lista de visualización
+                        seriesDetails.set(position, selectedSerie.getNombreEjercicio() + ", Peso: " + newPeso + " kg, Repeticiones: " + newRepeticiones);
+                        adapter.notifyDataSetChanged();
+
+                        Toast.makeText(this, "Serie actualizada", Toast.LENGTH_SHORT).show();
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "Por favor, ingrese valores válidos", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
+        builder.create().show();
     }
 
     @Override

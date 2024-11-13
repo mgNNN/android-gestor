@@ -25,7 +25,7 @@
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/editTextPeso"
+            android:id="@+id/editTextPesoModificar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -33,7 +33,7 @@
             android:inputType="numberDecimal" />
 
         <EditText
-            android:id="@+id/editTextRepeticiones"
+            android:id="@+id/editTextRepeticionesModificar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -3,7 +3,6 @@ package es.ifp.gestorpersonal;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -111,8 +110,8 @@ public class RutinaActivity extends AppCompatActivity {
             // Añadir cada serie al ejercicio
             for (int j = 0; j < contenedorSeries.getChildCount(); j++) {
                 View serieView = contenedorSeries.getChildAt(j);
-                EditText editTextPeso = serieView.findViewById(R.id.editTextPeso);
-                EditText editTextRepeticiones = serieView.findViewById(R.id.editTextRepeticiones);
+                EditText editTextPeso = serieView.findViewById(R.id.editTextPesoModificar);
+                EditText editTextRepeticiones = serieView.findViewById(R.id.editTextRepeticionesModificar);
 
                 // Establece valores predeterminados si los campos están vacíos
                 double peso = 0.0;
