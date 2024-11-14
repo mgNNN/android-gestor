@@ -2,6 +2,7 @@ package es.ifp.gestorpersonal;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,8 +45,9 @@ public class MedicamentosAdd extends AppCompatActivity {
     private Intent pasarPantallaMed;
     // Declaración de OkHttpClient
     private final OkHttpClient client = new OkHttpClient();
-    ;
 
+    private int userId;
+    private int userIDdef;
     private String contenidoCaja1;
     private String contenidoCaja2;
     private String contenidoCaja3;
@@ -72,7 +74,9 @@ public class MedicamentosAdd extends AppCompatActivity {
         pasarPantallaMain = new Intent(MedicamentosAdd.this, ModulosActivity.class);
         pasarPantallaMed = new Intent(MedicamentosAdd.this, MedicamentosActivity.class);
         pasarPantallaAddMed = new Intent(MedicamentosAdd.this, MedicamentosAdd.class);
-
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);  // El valor -1 es por si no existe un userId guardado
+        userIDdef=userId;
         boton1.setOnClickListener(v -> {
             contenidoCaja1 = caja1.getText().toString();  // Nombre del medicamento
             contenidoCaja2 = caja2.getText().toString();  // Dosis
@@ -92,7 +96,7 @@ public class MedicamentosAdd extends AppCompatActivity {
         try {
             // Crear JSON con los datos del medicamento
             JSONObject medicamentoJson = new JSONObject();
-            medicamentoJson.put("user_id", 13); // Asegúrate de pasar el user_id adecuado
+            medicamentoJson.put("user_id", userIDdef); // Asegúrate de pasar el user_id adecuado
             medicamentoJson.put("medicamento", contenidoCaja1);
             medicamentoJson.put("dosis", Double.parseDouble(contenidoCaja2));
             medicamentoJson.put("dosisDia", Integer.parseInt(contenidoCaja3));

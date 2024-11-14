@@ -52,6 +52,7 @@ public class MedicamentosView extends AppCompatActivity {
     protected Button boton3;
 
     private int userId;
+    private int userIDdef;
     private Bundle extras;
     private String medNombre;
     private String medDosis;
@@ -194,8 +195,9 @@ public class MedicamentosView extends AppCompatActivity {
     private void updateMedicamento(int medicamentoId, String nombre, String dosis, String dosisDia, String duracionTratamiento, String horaPrimeraDosis) {
         JSONObject modMedicamentoJson = new JSONObject();
         OkHttpClient client = new OkHttpClient();
+        userIDdef=userId;
         try {
-            modMedicamentoJson.put("user_id", userId); // Asegúrate de pasar el user_id adecuado
+            modMedicamentoJson.put("user_id", userIDdef); // Asegúrate de pasar el user_id adecuado
             modMedicamentoJson.put("medicamento", caja1.getText().toString());
             modMedicamentoJson.put("dosis", caja2.getText().toString());
             modMedicamentoJson.put("dosisDia", caja3.getText().toString());

@@ -92,7 +92,6 @@ public class MedicamentosActivity extends AppCompatActivity {
 
 
 
-        //meds = db.getAllMedicamentos();
         adaptador = new ArrayAdapter<String>(MedicamentosActivity.this, android.R.layout.simple_list_item_1, meds);
         medicamentosList.setAdapter(adaptador);
 
