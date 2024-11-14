@@ -1,6 +1,7 @@
 package es.ifp.gestorpersonal;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,12 +17,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MedicamentosView extends AppCompatActivity {
@@ -45,6 +51,7 @@ public class MedicamentosView extends AppCompatActivity {
     protected Button boton2;
     protected Button boton3;
 
+    private int userId;
     private Bundle extras;
     private String medNombre;
     private String medDosis;
@@ -80,6 +87,13 @@ public class MedicamentosView extends AppCompatActivity {
 
         pasarPantallaMain = new Intent(MedicamentosView.this, MedicamentosActivity.class);
         //pasarPantallaMod = new Intent(MedicamentosView.this, MedicamentosModify.class);
+        // Recuperar el userId de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userId", -1);
+
+        if (userId == -1) {
+            Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+        }
 
         caja1.setEnabled(false);
         caja2.setEnabled(false);
@@ -109,17 +123,22 @@ public class MedicamentosView extends AppCompatActivity {
         });
 
         boton2.setOnClickListener(v -> {
-            caja1.setEnabled(true);
-            caja1.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
-            caja2.setEnabled(true);
-            caja2.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
-            caja3.setEnabled(true);
-            caja3.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
-            caja4.setEnabled(true);
-            caja4.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
-            caja5.setEnabled(true);
-            caja5.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
-        });
+                    caja1.setEnabled(true);
+                    caja1.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+                    caja2.setEnabled(true);
+                    caja2.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+                    caja3.setEnabled(true);
+                    caja3.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+                    caja4.setEnabled(true);
+                    caja4.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+                    caja5.setEnabled(true);
+                    caja5.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
+                    boton2.setText("GUARDAR");
+                    boton2.setOnClickListener(z -> {
+                        updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), caja4.getText().toString(), caja5.getText().toString());
+                    });
+                });
+
 
         boton3.setOnClickListener(v -> {
             // Confirmación de eliminación
@@ -172,7 +191,58 @@ public class MedicamentosView extends AppCompatActivity {
             }
         });
     }
+    private void updateMedicamento(int medicamentoId, String nombre, String dosis, String dosisDia, String duracionTratamiento, String horaPrimeraDosis) {
+        JSONObject modMedicamentoJson = new JSONObject();
+        OkHttpClient client = new OkHttpClient();
+        try {
+            modMedicamentoJson.put("user_id", userId); // Asegúrate de pasar el user_id adecuado
+            modMedicamentoJson.put("medicamento", caja1.getText().toString());
+            modMedicamentoJson.put("dosis", caja2.getText().toString());
+            modMedicamentoJson.put("dosisDia", caja3.getText().toString());
+            modMedicamentoJson.put("duracionTratamiento", caja4.getText().toString());
+            modMedicamentoJson.put("horaPrimeraDosis", caja5.getText().toString());
+        } catch (JSONException e) {
+            Toast.makeText(this, "Error al actualizar el medicamento", Toast.LENGTH_SHORT).show();
+            throw new RuntimeException(e);
+        }
+        // Crear RequestBody
+        RequestBody body = RequestBody.create(
+                modMedicamentoJson.toString(),
+                MediaType.parse("application/json; charset=utf-8")
+        );
 
+        // URL para el UPDATE, reemplazando :medicamento_id con el ID real
+        String url = "https://gestor-personal-4898737da4af.herokuapp.com/medicamentos/" + medicamentoId;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)  // Método DELETE
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() ->
+                        Toast.makeText(MedicamentosView.this, "Error al modificar medicamento", Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MedicamentosView.this, "Medicamento actualizado exitosamente", Toast.LENGTH_SHORT).show();
+                        finish();  // Regresar a la pantalla anterior después de la eliminación
+                        startActivity(pasarPantallaMain);  // Redirigir si es necesario
+                    });
+                } else {
+                    runOnUiThread(() ->
+                            Toast.makeText(MedicamentosView.this, "Error al modificar medicamento", Toast.LENGTH_SHORT).show()
+                    );
+                }
+            }
+        });
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
