@@ -178,6 +178,10 @@ public class MedicamentosActivity extends AppCompatActivity {
                             String horaPrimeraDosis = med.getString("horaPrimeraDosis");
                             int itemId = med.getInt("id");
                             meds.add(medic);
+                            // *********************************************************************
+                            //    HACER LOGICA PARA INCLUIR ESTO  -->  meds.add(siguienteDosis);
+                            // *********************************************************************
+
 //                            medsInfo.add(medic);
 //                            medsInfo.add(dosis);
 //                            medsInfo.add(dosisDia);
