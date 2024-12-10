@@ -30,15 +30,13 @@ import okhttp3.Response;
 
 public class MedicamentosAdd extends AppCompatActivity {
 
-    protected TextView label1;
-    protected TextView label2;
+
     protected EditText caja1;
     protected EditText caja2;
     protected EditText caja3;
     protected EditText caja4;
     protected EditText caja5;
-    protected EditText caja6;
-    protected EditText caja7;
+
     protected Button boton1;
     private Intent pasarPantallaMain;
     private Intent pasarPantallaAddMed;
@@ -60,15 +58,13 @@ public class MedicamentosAdd extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medicamentos_add);
-        label1 = (TextView) findViewById(R.id.label1_med_add);
-        label2 = (TextView) findViewById(R.id.label2_med_add);
+
         caja1 = (EditText) findViewById(R.id.caja1_med_add);
         caja2 = (EditText) findViewById(R.id.caja2_med_add);
         caja3 = (EditText) findViewById(R.id.caja3_med_add);
         caja4 = (EditText) findViewById(R.id.caja4_med_add);
         caja5 = (EditText) findViewById(R.id.caja5_med_add);
-        caja6 = (EditText) findViewById(R.id.caja6_med_add);
-        caja7 = (EditText) findViewById(R.id.caja7_med_add);
+
         boton1 = (Button) findViewById(R.id.button1_med_add);
 
         pasarPantallaMain = new Intent(MedicamentosAdd.this, ModulosActivity.class);

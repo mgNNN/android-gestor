@@ -4,12 +4,73 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/button3_med_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="50dp"
+        android:text="Borrar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button2_med_view"
+        app:layout_constraintTop_toBottomOf="@+id/caja7_med_view" />
+
+    <Button
+        android:id="@+id/button2_med_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="20dp"
+        android:text="Modificar"
+        app:layout_constraintEnd_toStartOf="@+id/button3_med_view"
+        app:layout_constraintStart_toEndOf="@+id/button1_med_view"
+        app:layout_constraintTop_toBottomOf="@+id/caja7_med_view" />
+
+    <Button
+        android:id="@+id/button1_med_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="20dp"
+        android:text="Volver"
+        app:layout_constraintEnd_toStartOf="@+id/button2_med_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label7_med_view" />
+
+    <EditText
+        android:id="@+id/caja6_med_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="68dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/caja5_med_mod3" />
+
+    <TextView
+        android:id="@+id/label1_med_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="15dp"
+        android:text="Nombre"
+        app:layout_constraintEnd_toStartOf="@+id/caja1_med_mod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/caja1_med_view"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="93dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="68dp"
         android:ems="10"
         android:hint="Introduce el nuevo nombre del medicamento"
         android:inputType="text"
@@ -17,12 +78,61 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/caja3_med_mod3"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="68dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/caja2_med_mod3" />
+
+    <EditText
+        android:id="@+id/caja4_med_mod3"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="68dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/caja3_med_mod3" />
+
+    <TextView
+        android:id="@+id/label6_med_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="55dp"
+        android:text="Siguiente toma"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label5_med_view" />
+
+    <EditText
+        android:id="@+id/caja5_med_mod3"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="68dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/caja4_med_mod3" />
+
     <TextView
         android:id="@+id/label4_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="55dp"
         android:text="Duración total"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label3_med_view" />
@@ -32,27 +142,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="55dp"
         android:text="TomasDiarias"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label2_med_view" />
-
-    <TextView
-        android:id="@+id/label5_med_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="50dp"
-        android:text="Primera toma"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label4_med_view" />
 
     <EditText
         android:id="@+id/caja2_med_mod3"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="68dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
@@ -61,100 +161,46 @@
         app:layout_constraintTop_toBottomOf="@+id/caja1_med_view" />
 
     <TextView
-        android:id="@+id/label1_med_view"
+        android:id="@+id/label5_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="108dp"
-        android:layout_marginEnd="15dp"
-        android:text="Nombre"
-        app:layout_constraintEnd_toStartOf="@+id/caja1_med_mod"
+        android:layout_marginTop="55dp"
+        android:text="Primera toma"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/caja4_med_mod3"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="70dp"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/caja3_med_mod3" />
-
-    <EditText
-        android:id="@+id/caja5_med_mod3"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="70dp"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/caja4_med_mod3" />
+        app:layout_constraintTop_toBottomOf="@+id/label4_med_view" />
 
     <TextView
         android:id="@+id/label2_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="55dp"
         android:text="Dosis"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label1_med_view" />
 
     <EditText
-        android:id="@+id/caja3_med_mod3"
+        android:id="@+id/caja7_med_view"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginEnd="68dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/caja2_med_mod3" />
+        app:layout_constraintTop_toBottomOf="@+id/caja6_med_view" />
 
-    <Button
-        android:id="@+id/button3_med_view"
+    <TextView
+        android:id="@+id/label7_med_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="51dp"
-        android:layout_marginEnd="50dp"
-        android:text="Borrar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button2_med_view"
-        app:layout_constraintTop_toBottomOf="@+id/caja5_med_mod3" />
-
-    <Button
-        android:id="@+id/button2_med_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="20dp"
-        android:text="Modificar"
-        app:layout_constraintEnd_toStartOf="@+id/button3_med_view"
-        app:layout_constraintStart_toEndOf="@+id/button1_med_view"
-        app:layout_constraintTop_toBottomOf="@+id/caja5_med_mod3" />
-
-    <Button
-        android:id="@+id/button1_med_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="20dp"
-        android:text="Volver"
-        app:layout_constraintEnd_toStartOf="@+id/button2_med_view"
+        android:layout_marginTop="55dp"
+        android:text="Fin tratamiento"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label5_med_view" />
+        app:layout_constraintTop_toBottomOf="@+id/label6_med_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

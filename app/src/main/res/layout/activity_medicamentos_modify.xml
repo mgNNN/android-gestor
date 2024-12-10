@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginTop="120dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
@@ -55,9 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="15dp"
         android:text="TomasDiarias"
-        app:layout_constraintEnd_toStartOf="@+id/caja3_med_mod"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label2_med_mod" />
 
@@ -65,12 +63,12 @@
         android:id="@+id/caja3_med_mod"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginStart="15dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
-        app:layout_constraintStart_toEndOf="@+id/label3_med_mod"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/caja2_med_mod" />
 
     <TextView
@@ -79,9 +77,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="15dp"
         android:text="Duración total"
-        app:layout_constraintEnd_toStartOf="@+id/caja4_med_mod"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label3_med_mod" />
 
@@ -91,9 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="15dp"
         android:text="Primera toma"
-        app:layout_constraintEnd_toStartOf="@+id/caja5_med_mod"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label4_med_mod" />
 
@@ -101,24 +95,24 @@
         android:id="@+id/caja4_med_mod"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginStart="15dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
-        app:layout_constraintStart_toEndOf="@+id/label4_med_mod"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/caja3_med_mod" />
 
     <EditText
         android:id="@+id/caja5_med_mod"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginStart="15dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
-        app:layout_constraintStart_toEndOf="@+id/label5_med_mod"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/caja4_med_mod" />
 
     <Button
@@ -127,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="50dp"
-        android:layout_marginBottom="170dp"
+        android:layout_marginBottom="70dp"
         android:text="Volver"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2_med_mod"
@@ -139,9 +133,52 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="80dp"
-        android:layout_marginBottom="170dp"
+        android:layout_marginBottom="70dp"
         android:text="guardar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button1_med_mod" />
+
+    <TextView
+        android:id="@+id/label6_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="52dp"
+        android:text="Siguiente toma"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label5_med_mod" />
+
+    <EditText
+        android:id="@+id/caja6_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/caja5_med_mod" />
+
+    <EditText
+        android:id="@+id/caja7_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/caja6_med_mod" />
+
+    <TextView
+        android:id="@+id/label7_med_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="Fin de tratamiento"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="549dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

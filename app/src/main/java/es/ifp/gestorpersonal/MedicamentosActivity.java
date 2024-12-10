@@ -144,13 +144,9 @@ public class MedicamentosActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
 
     public void loadMeds() {
-
-
         Request request = new Request.Builder()
                 .url(BASE_URL+userIDdef)
                 .build();
@@ -181,7 +177,6 @@ public class MedicamentosActivity extends AppCompatActivity {
                             // *********************************************************************
                             //    HACER LOGICA PARA INCLUIR ESTO  -->  meds.add(siguienteDosis);
                             // *********************************************************************
-
 //                            medsInfo.add(medic);
 //                            medsInfo.add(dosis);
 //                            medsInfo.add(dosisDia);
