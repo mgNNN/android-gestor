@@ -23,6 +23,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,35 +59,39 @@ public class MedicamentosView extends AppCompatActivity {
     protected Button boton1;
     protected Button boton2;
     protected Button boton3;
+    protected Button boton4;
 
     private int userId;
     private int userIDdef;
     private Integer medID = -1;
+    private String siguienteDosis;
+    private int intervalHoras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medicamentos_view);
 
-        label1 = (TextView) findViewById(R.id.label1_med_view);
-        label2 = (TextView) findViewById(R.id.label2_med_view);
-        label3 = (TextView) findViewById(R.id.label3_med_view);
-        label4 = (TextView) findViewById(R.id.label4_med_view);
-        label5 = (TextView) findViewById(R.id.label5_med_view);
-        label6 = (TextView) findViewById(R.id.label6_med_view);
-        label7 = (TextView) findViewById(R.id.label7_med_view);
+        label1 = findViewById(R.id.label1_med_view);
+        label2 = findViewById(R.id.label2_med_view);
+        label3 = findViewById(R.id.label3_med_view);
+        label4 = findViewById(R.id.label4_med_view);
+        label5 = findViewById(R.id.label5_med_view);
+        label6 = findViewById(R.id.label6_med_view);
+        label7 = findViewById(R.id.label7_med_view);
 
-        caja1 = (EditText) findViewById(R.id.caja1_med_view);
-        caja2 = (EditText) findViewById(R.id.caja2_med_mod3);
-        caja3 = (EditText) findViewById(R.id.caja3_med_mod3);
-        caja4 = (EditText) findViewById(R.id.caja4_med_mod3);
-        caja5 = (EditText) findViewById(R.id.caja5_med_mod3);
-        caja6 = (EditText) findViewById(R.id.caja6_med_view);
-        caja7 = (EditText) findViewById(R.id.caja7_med_view);
+        caja1 = findViewById(R.id.caja1_med_view);
+        caja2 = findViewById(R.id.caja2_med_mod3);
+        caja3 = findViewById(R.id.caja3_med_mod3);
+        caja4 = findViewById(R.id.caja4_med_mod3);
+        caja5 = findViewById(R.id.caja5_med_mod3);
+        caja6 = findViewById(R.id.caja6_med_view);
+        caja7 = findViewById(R.id.caja7_med_view);
 
-        boton1 = (Button) findViewById(R.id.button1_med_view);
-        boton2 = (Button) findViewById(R.id.button2_med_view);
-        boton3 = (Button) findViewById(R.id.button3_med_view);
+        boton1 = findViewById(R.id.button1_med_view);
+        boton2 = findViewById(R.id.button2_med_view);
+        boton3 = findViewById(R.id.button3_med_view);
+        boton4 = findViewById(R.id.button4_med_view);
 
         pasarPantallaMain = new Intent(MedicamentosView.this, MedicamentosActivity.class);
 
@@ -97,13 +103,7 @@ public class MedicamentosView extends AppCompatActivity {
             Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
         }
 
-        caja1.setEnabled(false);
-        caja2.setEnabled(false);
-        caja3.setEnabled(false);
-        caja4.setEnabled(false);
-        caja5.setEnabled(false);
-        caja6.setEnabled(false);
-        caja7.setEnabled(false);
+        deshabilitarEdicion();
 
         Intent intent = getIntent();
         Medicamento medicamentoItem = (Medicamento) intent.getSerializableExtra("medicamento");
@@ -113,8 +113,10 @@ public class MedicamentosView extends AppCompatActivity {
             caja3.setText(medicamentoItem.getDosisDia());
             caja4.setText(medicamentoItem.getDuracionTratamiento());
             caja5.setText(medicamentoItem.getHoraPrimeraDosis());
+            caja6.setText(medicamentoItem.calcularSiguienteToma());
+            caja7.setText(medicamentoItem.calcularFinTratamiento());
             medID = medicamentoItem.getId(); // Asumiendo que Medicamento tiene un método getId()
-            calcularFechas(medicamentoItem);
+            medicamentoItem.calcularFechas();
         } else {
             Toast.makeText(this, "No se recibieron datos del medicamento", Toast.LENGTH_SHORT).show();
         }
@@ -149,7 +151,13 @@ public class MedicamentosView extends AppCompatActivity {
                     .setNegativeButton("No", (dialog, id) -> dialog.cancel())
                     .show();
         });
+
+        boton4.setOnClickListener(v -> {
+            caja6.setText(medicamentoItem.calcularSiguienteToma());
+        });
     }
+
+
 
     private void deleteMedicamento(int medicamentoId) {
         OkHttpClient client = new OkHttpClient();
@@ -198,7 +206,8 @@ public class MedicamentosView extends AppCompatActivity {
             modMedicamentoJson.put("duracionTratamiento", caja4.getText().toString());
             modMedicamentoJson.put("horaPrimeraDosis", caja5.getText().toString());
 
-            calcularFechas(new Medicamento(nombre, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, medicamentoId));
+            Medicamento nuevoMedicamentoItem = new Medicamento(nombre, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, medicamentoId);
+            nuevoMedicamentoItem.calcularFechas();
 
         } catch (JSONException e) {
             Toast.makeText(this, "Error al actualizar el medicamento", Toast.LENGTH_SHORT).show();
@@ -244,51 +253,35 @@ public class MedicamentosView extends AppCompatActivity {
     }
     private void habilitarEdicion() {
         caja1.setEnabled(true);
+        caja1.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
         caja2.setEnabled(true);
+        caja2.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
         caja3.setEnabled(true);
+        caja3.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
         caja4.setEnabled(true);
+        caja4.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
         caja5.setEnabled(true);
+        caja5.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
         caja6.setEnabled(true);
         caja7.setEnabled(true);
+        boton4.setEnabled(false);
+        boton3.setEnabled(false);
     }
-    private void calcularFechas(Medicamento medicamento) {
-        try {
-            // Definir el formato para las horas
-            SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm:ss");
-            // Definir el formato para fecha y hora completa (dd/MM/yyyy HH:mm:ss)
-            SimpleDateFormat sdfFechaHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    private void deshabilitarEdicion() {
+        caja1.setEnabled(false);
+        caja2.setEnabled(false);
+        caja3.setEnabled(false);
+        caja4.setEnabled(false);
+        caja5.setEnabled(false);
+        caja6.setEnabled(false);
+        caja7.setEnabled(false);
+        boton4.setEnabled(true);
+        boton3.setEnabled(true);
+    }
+    private void siguienteToma(Medicamento medicamento) {
 
-            // Obtener la fecha y hora actual
-            Calendar calendar = Calendar.getInstance();
-
-            // Parsear la hora de la primera dosis (sin fecha) y establecerla en el calendario
-            Date horaPrimeraDosis = sdfHora.parse(medicamento.getHoraPrimeraDosis());
-
-            // Establecer la hora extraída en el calendario
-            calendar.set(Calendar.HOUR_OF_DAY, horaPrimeraDosis.getHours());
-            calendar.set(Calendar.MINUTE, horaPrimeraDosis.getMinutes());
-            calendar.set(Calendar.SECOND, horaPrimeraDosis.getSeconds());
-
-            int dosisPorDia = Integer.parseInt(medicamento.getDosisDia());
-            int duracionTratamiento = Integer.parseInt(medicamento.getDuracionTratamiento());
-
-            // Calcular la hora de la siguiente dosis
-            int intervalHoras = 24 / dosisPorDia;
-            calendar.add(Calendar.HOUR_OF_DAY, intervalHoras);
-            String siguienteDosis = sdfHora.format(calendar.getTime());
             caja6.setText(siguienteDosis);
 
-            // Calcular el fin del tratamiento (añadir días de duración al tratamiento)
-            calendar.add(Calendar.DAY_OF_YEAR, duracionTratamiento);
-
-            // Formatear el fin del tratamiento con fecha y hora completa
-            String finTratamiento = sdfFechaHora.format(calendar.getTime());
-            caja7.setText(finTratamiento);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error al calcular fechas", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override

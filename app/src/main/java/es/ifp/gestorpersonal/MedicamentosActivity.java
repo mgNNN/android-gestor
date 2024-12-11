@@ -27,7 +27,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,11 +51,12 @@ public class MedicamentosActivity extends AppCompatActivity {
     private ArrayAdapter<String> adaptador;
     private Bundle extras;
     protected int userIDdef;
-    private String medNombre;
-    private String medDosis;
-    private String medNumTomas;
-    private String medDuracion;
-    private String medHoraDosis1;
+//    private String siguienteDosis;
+//    private String medNombre;
+//    private String medDosis;
+//    private String medNumTomas;
+//    private String medDuracion;
+//    private String medHoraDosis1;
 
     private String contenidoItem = "";
     private OkHttpClient client;
@@ -75,7 +80,6 @@ public class MedicamentosActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        // Recargar productos si el resultado fue OK
                         loadMeds();
                     }
                 }
@@ -88,41 +92,32 @@ public class MedicamentosActivity extends AppCompatActivity {
         int userId = sharedPreferences.getInt("userId", -1);  // El valor -1 es por si no existe un userId guardado
         userIDdef=userId;
 
-        //Toast.makeText(this, String.valueOf(userIDdef), Toast.LENGTH_SHORT).show();
-
-
-
         adaptador = new ArrayAdapter<String>(MedicamentosActivity.this, android.R.layout.simple_list_item_1, meds);
         medicamentosList.setAdapter(adaptador);
 
         loadMeds();
-        //addButton.setOnClickListener(v -> {
-         //   Intent intent = new Intent(this, ShoppingActivityAdd.class);
-         //   addProductLauncher.launch(intent); // Usa el launcher en lugar de startActivityForResult
-        //});
+
         pasarPantallaMed = new Intent(MedicamentosActivity.this, MedicamentosActivity.class);
         pasarPantallaMed.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
         pasarPantallaMain = new Intent(MedicamentosActivity.this, ModulosActivity.class);
         pasarPantallaAddMed = new Intent(MedicamentosActivity.this, MedicamentosAdd.class);
+// COMPROBAR SI LAS SIGUIENTES LINEAS HACEN ALGO O SE PUEDEN QUITAR (DIC 2024)
+//        extras = getIntent().getExtras();
+ //       if (extras != null) {
+ //           medNombre = extras.getString("MED_NOMBRE");
+ //           medDosis = extras.getString("MED_DOSIS");
+ //           medNumTomas = extras.getString("MED_NUM_DOSIS");
+ //           medDuracion = extras.getString("MED_DURACION");
+ //           medHoraDosis1 = extras.getString("MED_HORA_DOSIS");
 
-        extras = getIntent().getExtras();
-        if (extras != null) {
-            medNombre = extras.getString("MED_NOMBRE");
-            medDosis = extras.getString("MED_DOSIS");
-            medNumTomas = extras.getString("MED_NUM_DOSIS");
-            medDuracion = extras.getString("MED_DURACION");
-            medHoraDosis1 = extras.getString("MED_HORA_DOSIS");
 
+  //          Toast.makeText(this, "Medicamento enviado correctamente", Toast.LENGTH_SHORT).show();
 
-            Toast.makeText(this, "Medicamento enviado correctamente", Toast.LENGTH_SHORT).show();
-            //db.insertMedicamento(medNombre, medDosis, medNumTomas, medDuracion, medHoraDosis1);
+  ///       startActivity(pasarPantallaMed);
+  //         pasarPantallaMed.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
-            startActivity(pasarPantallaMed);
-            pasarPantallaMed.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
-        }
-
+  //            }
         medicamentosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -132,12 +127,6 @@ public class MedicamentosActivity extends AppCompatActivity {
                 pasarPantallaViewMed = new Intent(MedicamentosActivity.this,MedicamentosView.class);
                 pasarPantallaViewMed.putExtra("medicamento", medicamentoItem);
 
-//                pasarPantallaViewMed.putExtra("medicamento", medsInfo.get(0));
-//                pasarPantallaViewMed.putExtra("dosis", medsInfo.get(1));
-//                pasarPantallaViewMed.putExtra("dosisDia", contenidoItem);
-//                pasarPantallaViewMed.putExtra("duracionTratamiento", medsInfo);
-//                pasarPantallaViewMed.putExtra("horaPrimeraDosis", medsInfo);
-//                pasarPantallaViewMed.putExtra("id", contenidoItem);
                 startActivity(pasarPantallaViewMed);
                 } else {
                     Toast.makeText(MedicamentosActivity.this, "Índice no válido", Toast.LENGTH_SHORT).show();
@@ -173,17 +162,13 @@ public class MedicamentosActivity extends AppCompatActivity {
                             String duracionTratamiento = med.getString("duracionTratamiento");
                             String horaPrimeraDosis = med.getString("horaPrimeraDosis");
                             int itemId = med.getInt("id");
-                            meds.add(medic);
-                            // *********************************************************************
-                            //    HACER LOGICA PARA INCLUIR ESTO  -->  meds.add(siguienteDosis);
-                            // *********************************************************************
-//                            medsInfo.add(medic);
-//                            medsInfo.add(dosis);
-//                            medsInfo.add(dosisDia);
-//                            medsInfo.add(duracionTratamiento);
-//                            medsInfo.add(horaPrimeraDosis);
-//                           medsInfo.add(itemId);
+
+
                             Medicamento medicamento = new Medicamento(medic, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, itemId);
+                            medicamento.calcularFechas();
+
+                            meds.add(medic + ".-" + medicamento.calcularSiguienteToma() ); /// INTRODUCIR SIGUIENTE TOMA
+
                             medsInfo.add(medicamento);
                         }
                         runOnUiThread(() -> adaptador.notifyDataSetChanged());
@@ -199,6 +184,7 @@ public class MedicamentosActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

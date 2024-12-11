@@ -3,6 +3,7 @@ package es.ifp.gestorpersonal;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -24,18 +25,49 @@ public class Medicamento implements Serializable {
             this.duracionTratamiento = duracionTratamiento;
             this.horaPrimeraDosis = horaPrimeraDosis;
             this.id = id;
-            this.siguienteDosis = horaPrimeraDosis;
+            this.siguienteDosis = horaPrimeraDosis; // CAMBIAR ESTO PARA QUE SEA LA SIGUIENTE DOSIS DE VERDAD
         }
 
-    public String calcularSiguienteDosis(String ultimaDosis) {
+    public String calcularSiguienteToma() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
         try {
-            Date ultimaDosisDate = formatter.parse(ultimaDosis);
-            int dosisPorDia = Integer.parseInt(dosisDia);
+            Date primeraDosis = sdf.parse(horaPrimeraDosis);
+            calendar.setTime(primeraDosis);
 
+            int numeroDosis = Integer.parseInt(dosisDia);
+
+            int totalSegundosDelDia = 24 * 60 * 60;
+            int intervaloSegundos = totalSegundosDelDia / numeroDosis;
+
+            int intervaloHoras = intervaloSegundos / 3600;  // 1 hora = 3600 segundos
+            int intervaloMinutos = (intervaloSegundos % 3600) / 60;  // 1 minuto = 60 segundos
+            int intervaloSegundosRestantes = intervaloSegundos % 60;  // Restante en segundos
+
+            calendar.add(Calendar.HOUR_OF_DAY, intervaloHoras);  // Sumar las horas
+            calendar.add(Calendar.MINUTE, intervaloMinutos);  // Sumar los minutos
+            calendar.add(Calendar.SECOND, intervaloSegundosRestantes);  // Sumar los segundos
+
+            return sdf.format(calendar.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Error al calcular";
+        }
+    }
+    public String calcularFinTratamiento() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, Integer.parseInt(duracionTratamiento));
+        return sdf.format(calendar.getTime());
+    }
+    public String calcularFechas() {
+        try {
+            Date primeraDosisDate = formatter.parse(horaPrimeraDosis);
+            int dosisPorDia = Integer.parseInt(dosisDia);
             long intervalMinutes = 1440 / dosisPorDia; // 1440 minutos en un día dividido por el número de dosis por día
             long intervalMillis = TimeUnit.MINUTES.toMillis(intervalMinutes);
 
-            Date siguienteDosisDate = new Date(ultimaDosisDate.getTime() + intervalMillis);
+            Date siguienteDosisDate = new Date(primeraDosisDate.getTime() + intervalMillis);
 
             return formatter.format(siguienteDosisDate);
         } catch (ParseException e) {
@@ -43,9 +75,8 @@ public class Medicamento implements Serializable {
             return null;
         }
     }
-
     public void tomarDosis() {
-        siguienteDosis = calcularSiguienteDosis(siguienteDosis);
+        siguienteDosis = calcularSiguienteToma();
     }
         // Getters y setters
         public String getNombre() { return nombre; }
