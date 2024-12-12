@@ -1,6 +1,7 @@
 package es.ifp.gestorpersonal;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,6 +42,7 @@ public class ShoppingActivityEdit extends AppCompatActivity {
     private static final String ERROR_PRODUCTO_NO_ENCONTRADO = "Producto no encontrado";
     private static final String ERROR_ID_INVALIDO = "ID de producto inválido";
     private static final String ERROR_NOMBRE_VACIO = "El nombre del producto no puede estar vacío";
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,12 @@ public class ShoppingActivityEdit extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
 
         client = new OkHttpClient();
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userId", -1); 
+        
+        if (userId == -1) {
+            Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+        }
 
         if (!initializeProductDetails()) {
             return;
