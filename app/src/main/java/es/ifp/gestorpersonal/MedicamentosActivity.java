@@ -1,6 +1,7 @@
 package es.ifp.gestorpersonal;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -49,16 +50,8 @@ public class MedicamentosActivity extends AppCompatActivity {
     private ArrayList<String> meds = new ArrayList<String>();
     private ArrayList<Medicamento> medsInfo = new ArrayList<Medicamento>();
     private ArrayAdapter<String> adaptador;
-    private Bundle extras;
     protected int userIDdef;
-//    private String siguienteDosis;
-//    private String medNombre;
-//    private String medDosis;
-//    private String medNumTomas;
-//    private String medDuracion;
-//    private String medHoraDosis1;
 
-    private String contenidoItem = "";
     private OkHttpClient client;
 
 
@@ -71,6 +64,8 @@ public class MedicamentosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_medicamento);
+
+        cargarDosisTomadas(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -102,26 +97,10 @@ public class MedicamentosActivity extends AppCompatActivity {
 
         pasarPantallaMain = new Intent(MedicamentosActivity.this, ModulosActivity.class);
         pasarPantallaAddMed = new Intent(MedicamentosActivity.this, MedicamentosAdd.class);
-// COMPROBAR SI LAS SIGUIENTES LINEAS HACEN ALGO O SE PUEDEN QUITAR (DIC 2024)
-//        extras = getIntent().getExtras();
- //       if (extras != null) {
- //           medNombre = extras.getString("MED_NOMBRE");
- //           medDosis = extras.getString("MED_DOSIS");
- //           medNumTomas = extras.getString("MED_NUM_DOSIS");
- //           medDuracion = extras.getString("MED_DURACION");
- //           medHoraDosis1 = extras.getString("MED_HORA_DOSIS");
 
-
-  //          Toast.makeText(this, "Medicamento enviado correctamente", Toast.LENGTH_SHORT).show();
-
-  ///       startActivity(pasarPantallaMed);
-  //         pasarPantallaMed.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
-  //            }
         medicamentosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //contenidoItem = parent.getItemAtPosition(position).toString();
                 if (position < medsInfo.size()) {
                 Medicamento medicamentoItem = medsInfo.get(position);
                 pasarPantallaViewMed = new Intent(MedicamentosActivity.this,MedicamentosView.class);
@@ -163,12 +142,12 @@ public class MedicamentosActivity extends AppCompatActivity {
                             String horaPrimeraDosis = med.getString("horaPrimeraDosis");
                             int itemId = med.getInt("id");
 
-
                             Medicamento medicamento = new Medicamento(medic, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, itemId);
-                            medicamento.calcularFechas();
 
-                            meds.add(medic + ".-" + medicamento.calcularSiguienteToma() ); /// INTRODUCIR SIGUIENTE TOMA
+                            medicamento.calcularSiguienteToma();
+                            medicamento.calcularFinTratamiento();
 
+                            meds.add(medic + ".-" + medicamento.tomarDosis()); /// INTRODUCIR SIGUIENTE TOMA
                             medsInfo.add(medicamento);
                         }
                         runOnUiThread(() -> adaptador.notifyDataSetChanged());
@@ -184,7 +163,10 @@ public class MedicamentosActivity extends AppCompatActivity {
             }
         });
     }
-
+    public void cargarDosisTomadas(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        int dosisTomadas = sharedPreferences.getInt("dosisTomadas", 0);  // 0 es el valor por defecto
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

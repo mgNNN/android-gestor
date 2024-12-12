@@ -116,7 +116,8 @@ public class MedicamentosView extends AppCompatActivity {
             caja6.setText(medicamentoItem.calcularSiguienteToma());
             caja7.setText(medicamentoItem.calcularFinTratamiento());
             medID = medicamentoItem.getId(); // Asumiendo que Medicamento tiene un método getId()
-            medicamentoItem.calcularFechas();
+            medicamentoItem.calcularSiguienteToma();
+            medicamentoItem.calcularFinTratamiento();
         } else {
             Toast.makeText(this, "No se recibieron datos del medicamento", Toast.LENGTH_SHORT).show();
         }
@@ -153,7 +154,8 @@ public class MedicamentosView extends AppCompatActivity {
         });
 
         boton4.setOnClickListener(v -> {
-            caja6.setText(medicamentoItem.calcularSiguienteToma());
+            caja6.setText(medicamentoItem.tomarDosis());
+            medicamentoItem.guardarDosisTomadas(this);
         });
     }
 
@@ -207,7 +209,8 @@ public class MedicamentosView extends AppCompatActivity {
             modMedicamentoJson.put("horaPrimeraDosis", caja5.getText().toString());
 
             Medicamento nuevoMedicamentoItem = new Medicamento(nombre, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, medicamentoId);
-            nuevoMedicamentoItem.calcularFechas();
+            nuevoMedicamentoItem.calcularSiguienteToma();
+            nuevoMedicamentoItem.calcularFinTratamiento();
 
         } catch (JSONException e) {
             Toast.makeText(this, "Error al actualizar el medicamento", Toast.LENGTH_SHORT).show();
