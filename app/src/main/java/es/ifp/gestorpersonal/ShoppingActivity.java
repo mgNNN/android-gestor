@@ -1,6 +1,7 @@
 package es.ifp.gestorpersonal;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -42,6 +44,8 @@ public class ShoppingActivity extends AppCompatActivity {
     private static final String BASE_URL =
             "https://gestor-personal-4898737da4af.herokuapp.com/products";
     private ActivityResultLauncher<Intent> addProductLauncher;
+    private int userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,15 @@ public class ShoppingActivity extends AppCompatActivity {
         Button addButton = findViewById(R.id.addButton);
         Button editButton = findViewById(R.id.editButton);
         Button deleteButton = findViewById(R.id.deleteButton);
+
+        client = new OkHttpClient();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userId", -1);
+
+        if (userId == -1) {
+            Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+        }
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, products);
         productList.setAdapter(adapter);
