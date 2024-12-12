@@ -51,10 +51,7 @@ public class MedicamentosActivity extends AppCompatActivity {
     private ArrayList<Medicamento> medsInfo = new ArrayList<Medicamento>();
     private ArrayAdapter<String> adaptador;
     protected int userIDdef;
-
     private OkHttpClient client;
-
-
     private static final String BASE_URL =
             "https://gestor-personal-4898737da4af.herokuapp.com/medicamentos/";
     private ActivityResultLauncher<Intent> addMedLauncher;
@@ -65,7 +62,6 @@ public class MedicamentosActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_medicamento);
 
-        cargarDosisTomadas(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -138,16 +134,17 @@ public class MedicamentosActivity extends AppCompatActivity {
                             String medic = med.getString("medicamento");
                             String dosis = med.getString("dosis");
                             String dosisDia = med.getString("dosisDia");
+                            int dosisTomadas = med.getInt("dosisTomadas");
                             String duracionTratamiento = med.getString("duracionTratamiento");
                             String horaPrimeraDosis = med.getString("horaPrimeraDosis");
                             int itemId = med.getInt("id");
 
-                            Medicamento medicamento = new Medicamento(medic, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, itemId);
+                            Medicamento medicamento = new Medicamento(medic, dosis, dosisDia,dosisTomadas, duracionTratamiento, horaPrimeraDosis, itemId);
 
                             medicamento.calcularSiguienteToma();
                             medicamento.calcularFinTratamiento();
 
-                            meds.add(medic + ".-" + medicamento.tomarDosis()); /// INTRODUCIR SIGUIENTE TOMA
+                            meds.add(medic + ".-" + medicamento.calcularSiguienteToma()); /// INTRODUCIR SIGUIENTE TOMA
                             medsInfo.add(medicamento);
                         }
                         runOnUiThread(() -> adaptador.notifyDataSetChanged());
@@ -162,10 +159,6 @@ public class MedicamentosActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-    public void cargarDosisTomadas(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        int dosisTomadas = sharedPreferences.getInt("dosisTomadas", 0);  // 0 es el valor por defecto
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

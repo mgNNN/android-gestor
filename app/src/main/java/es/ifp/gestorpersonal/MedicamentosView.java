@@ -66,6 +66,7 @@ public class MedicamentosView extends AppCompatActivity {
     private Integer medID = -1;
     private String siguienteDosis;
     private int intervalHoras;
+    private int dosisTomadas=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +106,7 @@ public class MedicamentosView extends AppCompatActivity {
 
         deshabilitarEdicion();
 
+
         Intent intent = getIntent();
         Medicamento medicamentoItem = (Medicamento) intent.getSerializableExtra("medicamento");
         if (medicamentoItem != null) {
@@ -115,9 +117,12 @@ public class MedicamentosView extends AppCompatActivity {
             caja5.setText(medicamentoItem.getHoraPrimeraDosis());
             caja6.setText(medicamentoItem.calcularSiguienteToma());
             caja7.setText(medicamentoItem.calcularFinTratamiento());
-            medID = medicamentoItem.getId(); // Asumiendo que Medicamento tiene un método getId()
-            medicamentoItem.calcularSiguienteToma();
-            medicamentoItem.calcularFinTratamiento();
+            dosisTomadas = medicamentoItem.getDosisTomadas();
+            medID = medicamentoItem.getId();
+                if(caja6.getText().toString().equals("El tratamiento ha finalizado"))
+                {
+                    tratamientoFinalizado();
+                }
         } else {
             Toast.makeText(this, "No se recibieron datos del medicamento", Toast.LENGTH_SHORT).show();
         }
@@ -134,12 +139,11 @@ public class MedicamentosView extends AppCompatActivity {
             habilitarEdicion();
             boton2.setText("GUARDAR");
             boton2.setOnClickListener(z -> {
-                updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), caja4.getText().toString(), caja5.getText().toString());
+                updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), dosisTomadas, caja4.getText().toString(), caja5.getText().toString());
             });
         });
 
         boton3.setOnClickListener(v -> {
-            // Confirmación de eliminación
             AlertDialog.Builder builder = new AlertDialog.Builder(MedicamentosView.this);
             builder.setMessage("¿Estás seguro de que quieres eliminar este medicamento?")
                     .setCancelable(false)
@@ -155,11 +159,14 @@ public class MedicamentosView extends AppCompatActivity {
 
         boton4.setOnClickListener(v -> {
             caja6.setText(medicamentoItem.tomarDosis());
-            medicamentoItem.guardarDosisTomadas(this);
+            if(caja6.getText().toString().equals("El tratamiento ha finalizado"))
+            {
+                tratamientoFinalizado();
+            } else {
+            updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), dosisTomadas, caja4.getText().toString(), caja5.getText().toString());
+            }
         });
     }
-
-
 
     private void deleteMedicamento(int medicamentoId) {
         OkHttpClient client = new OkHttpClient();
@@ -196,7 +203,7 @@ public class MedicamentosView extends AppCompatActivity {
             }
         });
     }
-    private void updateMedicamento(int medicamentoId, String nombre, String dosis, String dosisDia, String duracionTratamiento, String horaPrimeraDosis) {
+    private void updateMedicamento(int medicamentoId, String nombre, String dosis, String dosisDia, int dosisTomadas, String duracionTratamiento, String horaPrimeraDosis) {
         JSONObject modMedicamentoJson = new JSONObject();
         OkHttpClient client = new OkHttpClient();
         userIDdef=userId;
@@ -205,10 +212,11 @@ public class MedicamentosView extends AppCompatActivity {
             modMedicamentoJson.put("medicamento", caja1.getText().toString());
             modMedicamentoJson.put("dosis", caja2.getText().toString());
             modMedicamentoJson.put("dosisDia", caja3.getText().toString());
+            modMedicamentoJson.put("dosisTomadas", dosisTomadas);
             modMedicamentoJson.put("duracionTratamiento", caja4.getText().toString());
             modMedicamentoJson.put("horaPrimeraDosis", caja5.getText().toString());
 
-            Medicamento nuevoMedicamentoItem = new Medicamento(nombre, dosis, dosisDia, duracionTratamiento, horaPrimeraDosis, medicamentoId);
+            Medicamento nuevoMedicamentoItem = new Medicamento(nombre, dosis, dosisDia, dosisTomadas, duracionTratamiento, horaPrimeraDosis, medicamentoId);
             nuevoMedicamentoItem.calcularSiguienteToma();
             nuevoMedicamentoItem.calcularFinTratamiento();
 
@@ -254,6 +262,17 @@ public class MedicamentosView extends AppCompatActivity {
             }
         });
     }
+    private void tratamientoFinalizado(){
+        caja1.setEnabled(false);
+        caja2.setEnabled(false);
+        caja3.setEnabled(false);
+        caja4.setEnabled(false);
+        caja5.setEnabled(false);
+        caja6.setEnabled(false);
+        caja7.setEnabled(false);
+        boton4.setEnabled(false);
+        boton2.setEnabled(false);
+    }
     private void habilitarEdicion() {
         caja1.setEnabled(true);
         caja1.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_edit, 0);
@@ -280,11 +299,6 @@ public class MedicamentosView extends AppCompatActivity {
         caja7.setEnabled(false);
         boton4.setEnabled(true);
         boton3.setEnabled(true);
-    }
-    private void siguienteToma(Medicamento medicamento) {
-
-            caja6.setText(siguienteDosis);
-
     }
 
     @Override
