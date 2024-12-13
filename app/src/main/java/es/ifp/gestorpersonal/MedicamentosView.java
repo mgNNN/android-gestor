@@ -119,7 +119,7 @@ public class MedicamentosView extends AppCompatActivity {
             caja7.setText(medicamentoItem.calcularFinTratamiento());
             dosisTomadas = medicamentoItem.getDosisTomadas();
             medID = medicamentoItem.getId();
-                if(caja6.getText().toString().equals("El tratamiento ha finalizado"))
+            if(caja6.getText().toString().contains("No hay más tomas"))
                 {
                     tratamientoFinalizado();
                 }
@@ -159,10 +159,10 @@ public class MedicamentosView extends AppCompatActivity {
 
         boton4.setOnClickListener(v -> {
             caja6.setText(medicamentoItem.tomarDosis());
-            if(caja6.getText().toString().equals("El tratamiento ha finalizado"))
+            if(caja6.getText().toString().contains("No hay más tomas"))
             {
                 tratamientoFinalizado();
-                updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), dosisTomadas, caja4.getText().toString(), caja5.getText().toString());
+                updateMedicamentoFin(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), dosisTomadas, caja4.getText().toString(), caja5.getText().toString());
             } else {
             updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), dosisTomadas, caja4.getText().toString(), caja5.getText().toString());
             }
@@ -252,8 +252,8 @@ public class MedicamentosView extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     runOnUiThread(() -> {
                         Toast.makeText(MedicamentosView.this, "Medicamento actualizado exitosamente", Toast.LENGTH_SHORT).show();
-                        finish();  // Regresar a la pantalla anterior después de la eliminación
-                        startActivity(pasarPantallaMain);  // Redirigir si es necesario
+                            finish();  // Regresar a la pantalla anterior después de la eliminación
+                            startActivity(pasarPantallaMain);  // Redirigir si es necesario
                     });
                 } else {
                     runOnUiThread(() ->
@@ -263,6 +263,64 @@ public class MedicamentosView extends AppCompatActivity {
             }
         });
     }
+    private void updateMedicamentoFin(int medicamentoId, String nombre, String dosis, String dosisDia, int dosisTomadas, String duracionTratamiento, String horaPrimeraDosis) {
+        JSONObject modMedicamentoJson = new JSONObject();
+        OkHttpClient client = new OkHttpClient();
+        userIDdef=userId;
+        try {
+            modMedicamentoJson.put("user_id", userIDdef); // Asegúrate de pasar el user_id adecuado
+            modMedicamentoJson.put("medicamento", caja1.getText().toString());
+            modMedicamentoJson.put("dosis", caja2.getText().toString());
+            modMedicamentoJson.put("dosisDia", caja3.getText().toString());
+            modMedicamentoJson.put("dosisTomadas", dosisTomadas);
+            modMedicamentoJson.put("duracionTratamiento", caja4.getText().toString());
+            modMedicamentoJson.put("horaPrimeraDosis", caja5.getText().toString());
+
+            Medicamento nuevoMedicamentoItem = new Medicamento(nombre, dosis, dosisDia, dosisTomadas, duracionTratamiento, horaPrimeraDosis, medicamentoId);
+            nuevoMedicamentoItem.calcularSiguienteToma();
+            nuevoMedicamentoItem.calcularFinTratamiento();
+
+        } catch (JSONException e) {
+            Toast.makeText(this, "Error al actualizar el medicamento", Toast.LENGTH_SHORT).show();
+            throw new RuntimeException(e);
+        }
+        // Crear RequestBody
+        RequestBody body = RequestBody.create(
+                modMedicamentoJson.toString(),
+                MediaType.parse("application/json; charset=utf-8")
+        );
+
+        // URL para el UPDATE, reemplazando :medicamento_id con el ID real
+        String url = "https://gestor-personal-4898737da4af.herokuapp.com/medicamentos/" + medicamentoId;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)  // Método DELETE
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() ->
+                        Toast.makeText(MedicamentosView.this, "Error al modificar medicamento", Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MedicamentosView.this, "Final del tratamiento, por favor borre el medicamento", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    runOnUiThread(() ->
+                            Toast.makeText(MedicamentosView.this, "Error al modificar medicamento", Toast.LENGTH_SHORT).show()
+                    );
+                }
+            }
+        });
+    }
+
     private void tratamientoFinalizado(){
         caja1.setEnabled(false);
         caja2.setEnabled(false);
@@ -273,6 +331,7 @@ public class MedicamentosView extends AppCompatActivity {
         caja7.setEnabled(false);
         boton4.setEnabled(false);
         boton2.setEnabled(false);
+        boton1.setEnabled(false);
     }
     private void habilitarEdicion() {
         caja1.setEnabled(true);

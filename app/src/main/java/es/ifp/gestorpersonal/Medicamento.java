@@ -45,16 +45,12 @@ public class Medicamento implements Serializable {
                 int intervaloSegundos = totalSegundosDelDia / numeroDosis;  // Intervalo en segundos entre dosis
 
                 if (dosisTomadas >= numeroDosisTotal) {
-                    calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
+                    //                            calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
                     return "El tratamiento ha finalizado";
                 }else if(dosisTomadas > 0) {
                     calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
                 }
-               // if (dosisTomadas > 0) {
-                //    calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
-               // } else if (dosisTomadas >= numeroDosis) {
-               //     return "El tratamiento ha finalizado";
-               // }
+
                 return sdf.format(calendar.getTime());
             } catch (ParseException e) {
                 e.printStackTrace();
