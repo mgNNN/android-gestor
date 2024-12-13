@@ -13,12 +13,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="150dp"
+            android:layout_marginBottom="16dp"
             android:hint="Nombre del nuevo elemento" />
 
         <Button
             android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="Guardar" />
 
     <Button

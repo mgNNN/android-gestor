@@ -3,7 +3,6 @@ package es.ifp.gestorpersonal;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -37,6 +35,7 @@ public class ShoppingActivity extends AppCompatActivity {
 
     private ListView productList;
     private ArrayList<String> products = new ArrayList<>();
+    private ArrayList<Integer> productIds = new ArrayList<>(); // Lista de IDs de productos
     private ArrayAdapter<String> adapter;
     private OkHttpClient client;
     private static final String BASE_URL =
@@ -84,11 +83,12 @@ public class ShoppingActivity extends AppCompatActivity {
 
         productList.setOnItemClickListener((parent, view, position, id) -> {
             String selectedProduct = products.get(position);
+            int productId = productIds.get(position); // Obtener el ID del producto
 
             // Crea un Intent para ir a ShoppingActivityEdit
             Intent intent = new Intent(ShoppingActivity.this, ShoppingActivityEdit.class);
-            intent.putExtra("product_name", selectedProduct);  // Pasa el nombre del producto
-            intent.putExtra("product_position", position);  // Pasa la posición del producto
+            intent.putExtra("product_name", selectedProduct);
+            intent.putExtra("product_id", productId);
             startActivity(intent);  // Inicia la actividad
         });
     }
@@ -110,14 +110,16 @@ public class ShoppingActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
-                    Log.d("ShoppingActivity", "Response Body: " + responseBody); // Para debug
                     try {
                         JSONArray jsonArray = new JSONArray(responseBody);
                         products.clear();  // Limpiar lista actual
+                        productIds.clear();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject product = jsonArray.getJSONObject(i);
                             String name = product.getString("name");
-                            products.add(name); // Añadir nombre del producto a la lista
+                            int productId = product.getInt("id");
+                            products.add(name);
+                            productIds.add(productId);
                         }
                         runOnUiThread(() -> adapter.notifyDataSetChanged());  // Actualizar la UI con los nuevos productos
                     } catch (JSONException e) {
@@ -140,7 +142,7 @@ public class ShoppingActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_back) {
             startActivity(new Intent(this, ModulosActivity.class));
