@@ -162,6 +162,7 @@ public class MedicamentosView extends AppCompatActivity {
             if(caja6.getText().toString().equals("El tratamiento ha finalizado"))
             {
                 tratamientoFinalizado();
+                updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), dosisTomadas, caja4.getText().toString(), caja5.getText().toString());
             } else {
             updateMedicamento(medID, caja1.getText().toString(), caja2.getText().toString(), caja3.getText().toString(), dosisTomadas, caja4.getText().toString(), caja5.getText().toString());
             }

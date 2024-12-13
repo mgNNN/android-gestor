@@ -81,7 +81,7 @@ public class MedicamentosActivity extends AppCompatActivity {
         // Recupera el userId de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         int userId = sharedPreferences.getInt("userId", -1);  // El valor -1 es por si no existe un userId guardado
-        userIDdef=userId;
+        userIDdef = userId;
 
         adaptador = new ArrayAdapter<String>(MedicamentosActivity.this, android.R.layout.simple_list_item_1, meds);
         medicamentosList.setAdapter(adaptador);
@@ -98,11 +98,11 @@ public class MedicamentosActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position < medsInfo.size()) {
-                Medicamento medicamentoItem = medsInfo.get(position);
-                pasarPantallaViewMed = new Intent(MedicamentosActivity.this,MedicamentosView.class);
-                pasarPantallaViewMed.putExtra("medicamento", medicamentoItem);
+                    Medicamento medicamentoItem = medsInfo.get(position);
+                    pasarPantallaViewMed = new Intent(MedicamentosActivity.this, MedicamentosView.class);
+                    pasarPantallaViewMed.putExtra("medicamento", medicamentoItem);
 
-                startActivity(pasarPantallaViewMed);
+                    startActivity(pasarPantallaViewMed);
                 } else {
                     Toast.makeText(MedicamentosActivity.this, "Índice no válido", Toast.LENGTH_SHORT).show();
                 }
@@ -112,7 +112,7 @@ public class MedicamentosActivity extends AppCompatActivity {
 
     public void loadMeds() {
         Request request = new Request.Builder()
-                .url(BASE_URL+userIDdef)
+                .url(BASE_URL + userIDdef)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -139,15 +139,16 @@ public class MedicamentosActivity extends AppCompatActivity {
                             String horaPrimeraDosis = med.getString("horaPrimeraDosis");
                             int itemId = med.getInt("id");
 
-                            Medicamento medicamento = new Medicamento(medic, dosis, dosisDia,dosisTomadas, duracionTratamiento, horaPrimeraDosis, itemId);
+                            Medicamento medicamento = new Medicamento(medic, dosis, dosisDia, dosisTomadas, duracionTratamiento, horaPrimeraDosis, itemId);
 
-                            medicamento.tomarDosis();
+                            //medicamento.tomarDosis();
                             medicamento.calcularSiguienteToma();
                             medicamento.calcularFinTratamiento();
 
 
-                            meds.add(medic + ".-" + medicamento.calcularSiguienteToma()); /// INTRODUCIR SIGUIENTE TOMA
-                            medsInfo.add(medicamento);
+                                meds.add(medic + ".-" + medicamento.tomarDosis());
+                                medsInfo.add(medicamento);
+
                         }
                         runOnUiThread(() -> adaptador.notifyDataSetChanged());
                     } catch (JSONException e) {
@@ -162,6 +163,7 @@ public class MedicamentosActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

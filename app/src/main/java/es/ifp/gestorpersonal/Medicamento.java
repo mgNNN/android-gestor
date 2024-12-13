@@ -33,7 +33,9 @@ public class Medicamento implements Serializable {
     public String calcularSiguienteToma() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         Calendar calendar = Calendar.getInstance();  // Usamos la fecha y hora actuales como referencia
-        int numeroDosis = Integer.parseInt(dosisDia);  // Número de dosis al día
+        int numeroDosis = Integer.parseInt(dosisDia);
+        int duracion = Integer.parseInt(duracionTratamiento);
+        int numeroDosisTotal = numeroDosis * duracion; // Número de dosis al día
         if (horaPrimeraDosis != null && !horaPrimeraDosis.isEmpty()) {
             try {
                 Date primeraDosis = sdf.parse(horaPrimeraDosis);
@@ -41,19 +43,25 @@ public class Medicamento implements Serializable {
 
                 int totalSegundosDelDia = 24 * 60 * 60;  // 24 horas * 60 minutos * 60 segundos
                 int intervaloSegundos = totalSegundosDelDia / numeroDosis;  // Intervalo en segundos entre dosis
-//dosisTomadas = 1;
-                if (dosisTomadas > 0) {
+
+                if (dosisTomadas >= numeroDosisTotal) {
                     calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
-                } else if (dosisTomadas >= numeroDosis) {
                     return "El tratamiento ha finalizado";
+                }else if(dosisTomadas > 0) {
+                    calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
                 }
+               // if (dosisTomadas > 0) {
+                //    calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
+               // } else if (dosisTomadas >= numeroDosis) {
+               //     return "El tratamiento ha finalizado";
+               // }
                 return sdf.format(calendar.getTime());
             } catch (ParseException e) {
                 e.printStackTrace();
                 return "Error en la hora de la primera dosis";
             }
         } else {
-            return "Hora de la primera dosis no defeinida";
+            return "Hora de la primera dosis no definida";
         }
 
 
