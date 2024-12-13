@@ -2,14 +2,12 @@ package es.ifp.gestorpersonal;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class Medicamento implements Serializable {
     private String nombre;
@@ -18,50 +16,50 @@ public class Medicamento implements Serializable {
     private String duracionTratamiento;
     private String horaPrimeraDosis;
     private String siguienteDosis;
+    private int dosisTomadas;
     private int id;
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private int dosisTomadas;
     // Constructor
-    public Medicamento(String nombre, String dosis, String dosisDia, String duracionTratamiento, String horaPrimeraDosis, int id) {
+    public Medicamento(String nombre, String dosis, String dosisDia, int dosisTomadas, String duracionTratamiento, String horaPrimeraDosis, int id) {
         this.nombre = nombre;
         this.dosis = dosis;
         this.dosisDia = dosisDia;
         this.duracionTratamiento = duracionTratamiento;
         this.horaPrimeraDosis = horaPrimeraDosis;
         this.id = id;
-        this.siguienteDosis = horaPrimeraDosis; // CAMBIAR ESTO PARA QUE SEA LA SIGUIENTE DOSIS DE VERDAD
+        this.dosisTomadas = dosisTomadas;
     }
 
     public String calcularSiguienteToma() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         Calendar calendar = Calendar.getInstance();  // Usamos la fecha y hora actuales como referencia
-
-        // Si la hora de la primera dosis no está vacía, usamos ese valor
+        int numeroDosis = Integer.parseInt(dosisDia);
+        int duracion = Integer.parseInt(duracionTratamiento);
+        int numeroDosisTotal = numeroDosis * duracion; // Número de dosis al día
         if (horaPrimeraDosis != null && !horaPrimeraDosis.isEmpty()) {
             try {
-                // Parseamos la hora de la primera dosis (formato "HH:mm:ss")
                 Date primeraDosis = sdf.parse(horaPrimeraDosis);
                 calendar.setTime(primeraDosis);  // Establecemos el calendario con la hora de la primera dosis
+
+                int totalSegundosDelDia = 24 * 60 * 60;  // 24 horas * 60 minutos * 60 segundos
+                int intervaloSegundos = totalSegundosDelDia / numeroDosis;  // Intervalo en segundos entre dosis
+
+                if (dosisTomadas >= numeroDosisTotal) {
+                    //                            calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
+                    return "El tratamiento ha finalizado";
+                }else if(dosisTomadas > 0) {
+                    calendar.add(Calendar.SECOND, intervaloSegundos * dosisTomadas);
+                }
+
+                return sdf.format(calendar.getTime());
             } catch (ParseException e) {
                 e.printStackTrace();
                 return "Error en la hora de la primera dosis";
             }
+        } else {
+            return "Hora de la primera dosis no definida";
         }
-        int numeroDosis = Integer.parseInt(dosisDia);  // Número de dosis al día
-        int totalSegundosDelDia = 24 * 60 * 60;  // 24 horas * 60 minutos * 60 segundos
-        int intervaloSegundos = totalSegundosDelDia / numeroDosis;  // Intervalo en segundos entre dosis
 
-        // Convertimos el intervalo en horas, minutos y segundos
-        int intervaloHoras = intervaloSegundos / 3600;
-        int intervaloMinutos = (intervaloSegundos % 3600) / 60;
-        int intervaloSegundosRestantes = intervaloSegundos % 60;
-
-        // Sumamos el intervalo a la hora de la primera dosis
-        calendar.add(Calendar.HOUR_OF_DAY, intervaloHoras);
-        calendar.add(Calendar.MINUTE, intervaloMinutos);
-        calendar.add(Calendar.SECOND, intervaloSegundosRestantes);
-
-        return sdf.format(calendar.getTime());
 
     }
 
@@ -79,6 +77,12 @@ public class Medicamento implements Serializable {
             calendar.set(Calendar.HOUR_OF_DAY, primeraDosis.getHours());
             calendar.set(Calendar.MINUTE, primeraDosis.getMinutes());
             calendar.set(Calendar.SECOND, primeraDosis.getSeconds());
+
+            Calendar now = Calendar.getInstance();  // Hora actual
+            if (calendar.before(now)) {
+                // Si la hora de la primera dosis es anterior a la hora actual, añadimos un día a la fecha de fin de tratamiento
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
 
             // Número de dosis por día y duración en días
             int numeroDosis = Integer.parseInt(dosisDia);  // Dosis por día
@@ -121,7 +125,7 @@ public class Medicamento implements Serializable {
         int totalDosisPermitidas = duracion*numeroDosis;
 
         if (dosisTomadas+1 >= totalDosisPermitidas) {
-            return "El tratamiento ha finalizado";
+            return "No hay más tomas, \nEl tratamiento ha finalizado";
         }
         try {
             // Inicializamos el calendario con la hora de la primera dosis
@@ -149,26 +153,14 @@ public class Medicamento implements Serializable {
             calendar.add(Calendar.SECOND, intervaloSegundosRestantes*(dosisTomadas+1));
             SimpleDateFormat sdfFechaHora = new SimpleDateFormat("HH:mm:ss");
             siguienteDosis = sdfFechaHora.format(calendar.getTime());
-
             dosisTomadas++;
-
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return siguienteDosis;
     }
-    public void guardarDosisTomadas(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("dosisTomadas", dosisTomadas);
-        editor.apply();
-    }
 
-    public void cargarDosisTomadas(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        dosisTomadas = sharedPreferences.getInt("dosisTomadas", 0);  // 0 es el valor por defecto
-    }
 
 
     // Getters y setters
@@ -194,6 +186,13 @@ public class Medicamento implements Serializable {
 
     public void setDosisDia(String dosisDia) {
         this.dosisDia = dosisDia;
+    }
+
+    public int getDosisTomadas() {
+        return dosisTomadas;
+    }
+    public void setDosisTomadas(int dosisTomadas) {
+        this.dosisTomadas = dosisTomadas;
     }
 
     public String getDuracionTratamiento() {

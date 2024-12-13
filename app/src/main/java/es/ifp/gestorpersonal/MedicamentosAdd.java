@@ -94,8 +94,9 @@ public class MedicamentosAdd extends AppCompatActivity {
             JSONObject medicamentoJson = new JSONObject();
             medicamentoJson.put("user_id", userIDdef); // Asegúrate de pasar el user_id adecuado
             medicamentoJson.put("medicamento", contenidoCaja1);
-            medicamentoJson.put("dosis", Double.parseDouble(contenidoCaja2));
+            medicamentoJson.put("dosis", contenidoCaja2);
             medicamentoJson.put("dosisDia", Integer.parseInt(contenidoCaja3));
+            medicamentoJson.put("dosisTomadas", 0);
             medicamentoJson.put("duracionTratamiento", Float.parseFloat(contenidoCaja4));
             medicamentoJson.put("horaPrimeraDosis", contenidoCaja5);
 
