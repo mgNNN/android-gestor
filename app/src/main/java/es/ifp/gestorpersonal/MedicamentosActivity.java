@@ -146,7 +146,7 @@ public class MedicamentosActivity extends AppCompatActivity {
                             medicamento.calcularFinTratamiento();
 
 
-                                meds.add(medic + ".-" + medicamento.tomarDosis());
+                                meds.add("Nombre: "+medic + ".  " + "\nSiguiente toma: "+medicamento.tomarDosis());
                                 medsInfo.add(medicamento);
 
                         }

@@ -82,6 +82,12 @@ public class Medicamento implements Serializable {
             calendar.set(Calendar.MINUTE, primeraDosis.getMinutes());
             calendar.set(Calendar.SECOND, primeraDosis.getSeconds());
 
+            Calendar now = Calendar.getInstance();  // Hora actual
+            if (calendar.before(now)) {
+                // Si la hora de la primera dosis es anterior a la hora actual, añadimos un día a la fecha de fin de tratamiento
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+
             // Número de dosis por día y duración en días
             int numeroDosis = Integer.parseInt(dosisDia);  // Dosis por día
             int duracion = Integer.parseInt(duracionTratamiento);  // Duración del tratamiento en días
@@ -123,7 +129,7 @@ public class Medicamento implements Serializable {
         int totalDosisPermitidas = duracion*numeroDosis;
 
         if (dosisTomadas+1 >= totalDosisPermitidas) {
-            return "El tratamiento ha finalizado";
+            return "No hay más tomas, \nEl tratamiento ha finalizado";
         }
         try {
             // Inicializamos el calendario con la hora de la primera dosis
