@@ -141,8 +141,10 @@ public class MedicamentosActivity extends AppCompatActivity {
 
                             Medicamento medicamento = new Medicamento(medic, dosis, dosisDia,dosisTomadas, duracionTratamiento, horaPrimeraDosis, itemId);
 
+                            medicamento.tomarDosis();
                             medicamento.calcularSiguienteToma();
                             medicamento.calcularFinTratamiento();
+
 
                             meds.add(medic + ".-" + medicamento.calcularSiguienteToma()); /// INTRODUCIR SIGUIENTE TOMA
                             medsInfo.add(medicamento);
