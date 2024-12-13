@@ -3,14 +3,13 @@ package es.ifp.gestorpersonal;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -39,7 +38,6 @@ public class ShoppingActivity extends AppCompatActivity {
     private ListView productList;
     private ArrayList<String> products = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private int selectedPosition = -1;
     private OkHttpClient client;
     private static final String BASE_URL =
             "https://gestor-personal-4898737da4af.herokuapp.com/products";
@@ -51,29 +49,27 @@ public class ShoppingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_shopping);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Registro de actividad para agregar un producto
         addProductLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        // Recargar productos si el resultado fue OK
-                        loadProducts();
+                        loadProducts(); // Recargar productos si el resultado fue OK
                     }
                 }
         );
 
         client = new OkHttpClient();
         productList = findViewById(R.id.product_list);
-        Button addButton = findViewById(R.id.addButton);
-        Button editButton = findViewById(R.id.editButton);
-        Button deleteButton = findViewById(R.id.deleteButton);
 
-        client = new OkHttpClient();
-
+        // Recuperar el userId de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
 
@@ -86,35 +82,18 @@ public class ShoppingActivity extends AppCompatActivity {
 
         loadProducts();
 
-        addButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ShoppingActivityAdd.class);
-            addProductLauncher.launch(intent); // Usa el launcher en lugar de startActivityForResult
-        });
-        editButton.setOnClickListener(v -> {
-            if (selectedPosition >= 0) {
-                Intent intent = new Intent(this, ShoppingActivityEdit.class);
-                intent.putExtra("PRODUCT_POSITION", selectedPosition);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Selecciona un producto para modificar",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-        deleteButton.setOnClickListener(v -> {
-            if (selectedPosition >= 0) {
-                Intent intent = new Intent(this, ShoppingActivityEdit.class);
-                intent.putExtra("PRODUCT_POSITION", selectedPosition);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Selecciona un producto para eliminar",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+        productList.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedProduct = products.get(position);
 
-        productList.setOnItemClickListener((parent, view, position, id)
-                -> selectedPosition = position);
+            // Crea un Intent para ir a ShoppingActivityEdit
+            Intent intent = new Intent(ShoppingActivity.this, ShoppingActivityEdit.class);
+            intent.putExtra("product_name", selectedProduct);  // Pasa el nombre del producto
+            intent.putExtra("product_position", position);  // Pasa la posición del producto
+            startActivity(intent);  // Inicia la actividad
+        });
     }
 
+    // Método para cargar los productos desde la API
     public void loadProducts() {
         Request request = new Request.Builder()
                 .url(BASE_URL)
@@ -130,23 +109,24 @@ public class ShoppingActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Log.d("ShoppingActivity", "Response Body: " + responseBody); // Para debug
                     try {
-                        JSONArray jsonArray = new JSONArray(response.body().string());
-                        products.clear();
+                        JSONArray jsonArray = new JSONArray(responseBody);
+                        products.clear();  // Limpiar lista actual
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject product = jsonArray.getJSONObject(i);
                             String name = product.getString("name");
-                            products.add(name);
+                            products.add(name); // Añadir nombre del producto a la lista
                         }
-                        runOnUiThread(() -> adapter.notifyDataSetChanged());
+                        runOnUiThread(() -> adapter.notifyDataSetChanged());  // Actualizar la UI con los nuevos productos
                     } catch (JSONException e) {
                         runOnUiThread(() -> Toast.makeText(ShoppingActivity.this,
                                 "Error de datos", Toast.LENGTH_SHORT).show());
                     }
                 } else {
                     runOnUiThread(() -> Toast.makeText(ShoppingActivity.this,
-                            "Error en el servidor: " + response.message(),
-                            Toast.LENGTH_SHORT).show());
+                            "Error en el servidor: " + response.message(), Toast.LENGTH_SHORT).show());
                 }
             }
         });
@@ -161,14 +141,14 @@ public class ShoppingActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_back) {
+        int id = item.getItemId();
+        if (id == R.id.menu_back) {
             startActivity(new Intent(this, ModulosActivity.class));
-        } else if (item.getItemId() == R.id.menu_close) {
+        } else if (id == R.id.menu_close) {
             System.exit(0);
-        } else if (item.getItemId() == R.id.menu_add) {
+        } else if (id == R.id.menu_add) {
             startActivity(new Intent(this, ShoppingActivityAdd.class));
         }
         return super.onOptionsItemSelected(item);
     }
 }
-
