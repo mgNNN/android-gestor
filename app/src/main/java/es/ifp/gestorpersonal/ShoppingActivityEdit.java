@@ -29,7 +29,7 @@ public class ShoppingActivityEdit extends AppCompatActivity {
     private OkHttpClient client;
     private int productId;
     private static final String BASE_URL =
-            "https://gestor-personal-4898737da4af.herokuapp.com/api/products/";
+            "https://gestor-personal-4898737da4af.herokuapp.com/products/";
     private static final MediaType JSON_MEDIA_TYPE =
             MediaType.get("application/json; charset=utf-8");
 
@@ -56,8 +56,8 @@ public class ShoppingActivityEdit extends AppCompatActivity {
 
         client = new OkHttpClient();
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        userId = sharedPreferences.getInt("userId", -1); 
-        
+        userId = sharedPreferences.getInt("userId", -1);
+
         if (userId == -1) {
             Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
         }

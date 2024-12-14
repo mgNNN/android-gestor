@@ -35,8 +35,7 @@ public class ShoppingActivity extends AppCompatActivity {
     private ArrayList<Integer> productIds = new ArrayList<>(); // Lista de IDs de productos
     private ArrayAdapter<String> adapter;
     private OkHttpClient client;
-    private static final String BASE_URL =
-            "https://gestor-personal-4898737da4af.herokuapp.com/products";
+    private static final String BASE_URL = "https://gestor-personal-4898737da4af.herokuapp.com/products/";
     private ActivityResultLauncher<Intent> addProductLauncher;
     private int userId;
 
@@ -64,6 +63,7 @@ public class ShoppingActivity extends AppCompatActivity {
 
         if (userId == -1) {
             Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, products);
@@ -88,8 +88,11 @@ public class ShoppingActivity extends AppCompatActivity {
 
     // Método para cargar los productos desde la API
     public void loadProducts() {
+        // Construir la URL con el userId para obtener productos específicos del usuario
+        String url = BASE_URL + userId;
+
         Request request = new Request.Builder()
-                .url(BASE_URL)
+                .url(url)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -143,7 +146,8 @@ public class ShoppingActivity extends AppCompatActivity {
         } else if (id == R.id.menu_close) {
             System.exit(0);
         } else if (id == R.id.menu_add) {
-            startActivity(new Intent(this, ShoppingActivityAdd.class));
+            Intent intent = new Intent(this, ShoppingActivityAdd.class);
+            addProductLauncher.launch(intent);
         }
         return super.onOptionsItemSelected(item);
     }

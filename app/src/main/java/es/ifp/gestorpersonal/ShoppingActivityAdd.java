@@ -42,11 +42,14 @@ public class ShoppingActivityAdd extends AppCompatActivity {
         Button backButton = findViewById(R.id.backButton);
 
         client = new OkHttpClient();
+
+        // Recuperar el userId de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
 
         if (userId == -1) {
             Toast.makeText(this, "ID de usuario no encontrado", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         addProductButton.setOnClickListener(v -> addProductToBackend());
@@ -54,7 +57,7 @@ public class ShoppingActivityAdd extends AppCompatActivity {
     }
 
     private void addProductToBackend() {
-        String productName = productNameInput.getText().toString();
+        String productName = productNameInput.getText().toString().trim();
 
         if (productName.isEmpty()) {
             Toast.makeText(this, "Por favor, ingresa un nombre para el producto",
@@ -62,9 +65,11 @@ public class ShoppingActivityAdd extends AppCompatActivity {
             return;
         }
 
+        // Crear el JSON con el nombre del producto y el user_id
         JSONObject json = new JSONObject();
         try {
             json.put("name", productName);
+            json.put("user_id", userId); // Asociar el producto al usuario actual
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error en la creación del JSON",
@@ -72,8 +77,12 @@ public class ShoppingActivityAdd extends AppCompatActivity {
             return;
         }
 
+        // Crear la solicitud POST
         RequestBody body = RequestBody.create(json.toString(), JSON_MEDIA_TYPE);
-        Request request = new Request.Builder().url(BASE_URL).post(body).build();
+        Request request = new Request.Builder()
+                .url(BASE_URL)
+                .post(body)
+                .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -88,8 +97,8 @@ public class ShoppingActivityAdd extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Toast.makeText(ShoppingActivityAdd.this,
                                 "Producto añadido correctamente", Toast.LENGTH_SHORT).show();
-                        setResult(RESULT_OK); // Indica que el producto se añadió
-                        finish(); // Cierra ShoppingActivityAdd
+                        setResult(RESULT_OK); // Indicar que la operación fue exitosa
+                        finish(); // Cerrar la actividad
                     });
                 } else {
                     runOnUiThread(() -> Toast.makeText(ShoppingActivityAdd.this,
@@ -101,4 +110,3 @@ public class ShoppingActivityAdd extends AppCompatActivity {
         });
     }
 }
-
