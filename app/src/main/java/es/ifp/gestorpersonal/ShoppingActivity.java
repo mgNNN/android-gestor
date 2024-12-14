@@ -3,6 +3,7 @@ package es.ifp.gestorpersonal;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,13 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,14 +43,7 @@ public class ShoppingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_shopping);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         // Registro de actividad para agregar un producto
         addProductLauncher = registerForActivityResult(
@@ -79,16 +69,19 @@ public class ShoppingActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, products);
         productList.setAdapter(adapter);
 
-        loadProducts();
+        loadProducts();  // Cargar los productos
 
         productList.setOnItemClickListener((parent, view, position, id) -> {
             String selectedProduct = products.get(position);
             int productId = productIds.get(position); // Obtener el ID del producto
 
+            // Verificar que el ID es válido
+            Log.d("ShoppingActivity", "Producto seleccionado: " + selectedProduct + " con ID: " + productId);
+
             // Crea un Intent para ir a ShoppingActivityEdit
             Intent intent = new Intent(ShoppingActivity.this, ShoppingActivityEdit.class);
-            intent.putExtra("product_name", selectedProduct);
-            intent.putExtra("product_id", productId);
+            intent.putExtra("PRODUCT_NAME", selectedProduct);
+            intent.putExtra("PRODUCT_ID", productId);  // Asegúrate de que el ID se pasa correctamente
             startActivity(intent);  // Inicia la actividad
         });
     }
@@ -120,6 +113,7 @@ public class ShoppingActivity extends AppCompatActivity {
                             int productId = product.getInt("id");
                             products.add(name);
                             productIds.add(productId);
+
                         }
                         runOnUiThread(() -> adapter.notifyDataSetChanged());  // Actualizar la UI con los nuevos productos
                     } catch (JSONException e) {
