@@ -144,6 +144,7 @@ public class ShoppingActivity extends AppCompatActivity {
         if (id == R.id.menu_back) {
             startActivity(new Intent(this, ModulosActivity.class));
         } else if (id == R.id.menu_close) {
+            finishAffinity();
             System.exit(0);
         } else if (id == R.id.menu_add) {
             Intent intent = new Intent(this, ShoppingActivityAdd.class);
