@@ -121,6 +121,7 @@ public class ShoppingActivityEdit extends AppCompatActivity {
             public void onResponse(Call call, Response response) {
                 if (response.isSuccessful()) {
                     mostrarMensaje(PRODUCTO_EDITADO);
+                    setResult(RESULT_OK); // Indicar que la operación fue exitosa
                     finish();
                 } else {
                     mostrarMensaje(ERROR_SERVIDOR + response.message());
@@ -145,6 +146,7 @@ public class ShoppingActivityEdit extends AppCompatActivity {
             public void onResponse(Call call, Response response) {
                 if (response.isSuccessful()) {
                     mostrarMensaje(PRODUCTO_ELIMINADO);
+                    setResult(RESULT_OK); // Indicar que la operación fue exitosa
                     finish();
                 } else {
                     mostrarMensaje(ERROR_SERVIDOR + response.message());

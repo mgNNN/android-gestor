@@ -36,7 +36,7 @@ public class ShoppingActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private OkHttpClient client;
     private static final String BASE_URL = "https://gestor-personal-4898737da4af.herokuapp.com/products/";
-    private ActivityResultLauncher<Intent> addProductLauncher;
+    private ActivityResultLauncher<Intent> addOrEditProductLauncher;
     private int userId;
 
     @Override
@@ -44,8 +44,8 @@ public class ShoppingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping);
 
-        // Registro de actividad para agregar un producto
-        addProductLauncher = registerForActivityResult(
+        // Registro de actividad para agregar o editar un producto
+        addOrEditProductLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
@@ -82,7 +82,7 @@ public class ShoppingActivity extends AppCompatActivity {
             Intent intent = new Intent(ShoppingActivity.this, ShoppingActivityEdit.class);
             intent.putExtra("PRODUCT_NAME", selectedProduct);
             intent.putExtra("PRODUCT_ID", productId);  // Asegúrate de que el ID se pasa correctamente
-            startActivity(intent);  // Inicia la actividad
+            addOrEditProductLauncher.launch(intent);  // Lanza la actividad y espera un resultado
         });
     }
 
@@ -147,7 +147,7 @@ public class ShoppingActivity extends AppCompatActivity {
             System.exit(0);
         } else if (id == R.id.menu_add) {
             Intent intent = new Intent(this, ShoppingActivityAdd.class);
-            addProductLauncher.launch(intent);
+            addOrEditProductLauncher.launch(intent); // Lanza la actividad para añadir productos
         }
         return super.onOptionsItemSelected(item);
     }
