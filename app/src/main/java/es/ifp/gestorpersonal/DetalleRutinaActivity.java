@@ -36,6 +36,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     private ArrayList<Serie> seriesList;
     private ArrayAdapter<String> adapter;
     private List<String> seriesDetails = new ArrayList<>();
+    private List<Integer> seriesIndexMap = new ArrayList<>(); // Mapa de índices reales
     protected Intent pasarPantalla;
 
     @Override
@@ -57,17 +58,20 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         if (seriesList != null && !seriesList.isEmpty()) {
             String lastExerciseName = "";
 
-            for (Serie serie : seriesList) {
+            for (int i = 0; i < seriesList.size(); i++) {
+                Serie serie = seriesList.get(i);
                 String currentExerciseName = serie.getNombreEjercicio();
 
                 // Si el ejercicio es diferente al anterior, agrega una línea en blanco para separar
                 if (!lastExerciseName.equals(currentExerciseName) && !lastExerciseName.isEmpty()) {
                     seriesDetails.add(""); // Añadir línea en blanco
+                    seriesIndexMap.add(null); // Línea en blanco no corresponde a un índice válido
                 }
 
                 String detalle = currentExerciseName + ", Peso: " + serie.getPeso() + " kg" +
                         ", Repeticiones: " + serie.getRepeticiones();
                 seriesDetails.add(detalle);
+                seriesIndexMap.add(i); // Mapea el índice visible al índice real
 
                 lastExerciseName = currentExerciseName;
             }
@@ -79,20 +83,21 @@ public class DetalleRutinaActivity extends AppCompatActivity {
 
         listViewSeries.setOnItemClickListener((parent, view, position, id) -> {
             // Comprobar que el elemento seleccionado no es una línea en blanco
-            if (!seriesDetails.get(position).isEmpty()) {
+            Integer seriesIndex = seriesIndexMap.get(position);
+            if (seriesIndex != null) {
                 // Mostrar diálogo para editar peso y repeticiones
-                showEditDialog(position);
+                showEditDialog(seriesIndex);
             }
         });
     }
 
-    private void showEditDialog(int position) {
+    private void showEditDialog(int index) {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_edit_series, null);
         EditText editTextPeso = dialogView.findViewById(R.id.editTextPesoModificar);
         EditText editTextRepeticiones = dialogView.findViewById(R.id.editTextRepeticionesModificar);
 
-        Serie selectedSerie = seriesList.get(position);
+        Serie selectedSerie = seriesList.get(index);
 
         // Rellenar con valores actuales
         editTextPeso.setText(String.valueOf(selectedSerie.getPeso()));
@@ -111,7 +116,10 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                         selectedSerie.setRepeticiones(newRepeticiones);
 
                         // Actualizar los detalles en la lista de visualización
-                        seriesDetails.set(position, selectedSerie.getNombreEjercicio() + ", Peso: " + newPeso + " kg, Repeticiones: " + newRepeticiones);
+                        int displayIndex = seriesDetails.indexOf(selectedSerie.getNombreEjercicio() + ", Peso: " + selectedSerie.getPeso() + " kg, Repeticiones: " + selectedSerie.getRepeticiones());
+                        if (displayIndex != -1) {
+                            seriesDetails.set(displayIndex, selectedSerie.getNombreEjercicio() + ", Peso: " + newPeso + " kg, Repeticiones: " + newRepeticiones);
+                        }
                         adapter.notifyDataSetChanged();
 
                         // Llamar al método para enviar la solicitud PUT al backend
@@ -162,8 +170,6 @@ public class DetalleRutinaActivity extends AppCompatActivity {
             }
         });
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -185,3 +191,4 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+
